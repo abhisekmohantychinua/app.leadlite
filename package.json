@@ -1,6 +1,8 @@
 {
   "name": "leadlite-app",
   "version": "0.0.0",
+  "license": "All Rights Reserved",
+  "author": "Abhisek <coderabhisek@gmail.com>",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

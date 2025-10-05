@@ -1,0 +1,57 @@
+name: Deploy LeadLite to GitHub Pages
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    build:
+        name: Build LeadLite App
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: "npm"
+            - run: npm ci
+            - run: npm run build
+            - name: Upload Build Artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: LeadLite
+                  path: dist/leadlite-app
+    test:
+        name: Run Jest Tests
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: "npm"
+            - run: npm ci
+            - run: npm run test
+        continue-on-error: false
+
+    deploy:
+        name: Deploy to GitHub Pages
+        runs-on: ubuntu-latest
+        needs: [build, test]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+            - uses: actions/download-artifact@v3
+              with:
+                  name: LeadLite
+                  path: dist/leadlite-app
+            - name: Deploy to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: dist/leadlite-app
+                  publish_branch: gh-pages
