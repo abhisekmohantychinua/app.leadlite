@@ -1,0 +1,12 @@
+.signup-section {
+  .signup-image-uploader {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .signup-image-feedback {
+    min-height: 1.5rem;
+  }
+}

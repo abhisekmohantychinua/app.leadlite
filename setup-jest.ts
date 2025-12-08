@@ -1,6 +1,13 @@
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
+import 'fake-indexeddb/auto';
+import { webcrypto } from 'crypto';
 
 setupZoneTestEnv();
+
+Object.defineProperty(window, 'crypto', {
+  writable: true,
+  value: webcrypto,
+});
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

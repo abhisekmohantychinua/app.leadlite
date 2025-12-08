@@ -37,7 +37,13 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+progress/
 
 # System files
 .DS_Store
 Thumbs.db
+
+
+# Tailwind
+# only added to activate vs code Tailwind CSS plugin
+ignore.css

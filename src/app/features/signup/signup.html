@@ -1,0 +1,177 @@
+<!-- Responsive split layout mirrors login so both auth routes feel cohesive. -->
+<section
+  class="signup-section h-screen w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center p-4 gap-8 lg:gap-4 bg-surface-50 dark:bg-surface-950">
+  <app-theme-toggle class="fixed top-4 right-4 lg:right-16"></app-theme-toggle>
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Hero artwork keeps the onboarding moment on brand. -->
+  <figure class="lg:max-w-sm xl:max-w-md lg:w-full relative">
+    <img
+      src="/Lead Lite Large Square.svg"
+      alt="Lead Lite"
+      class="aspect-square w-full z-0"
+      loading="lazy" />
+    <figcaption class="absolute top-1/2 left-1/2 translate-1/2 -z-10 invisible">
+      Lead Lite - Sign up
+    </figcaption>
+  </figure>
+
+  <!-- Card constrains the long form and improves readability. -->
+  <p-card class="w-full max-w-lg px-2 py-4 text-center">
+    <ng-template #title>Create your account</ng-template>
+    <form
+      pFocusTrap
+      [formGroup]="form"
+      (ngSubmit)="handleSignupFormSubmit()"
+      class="flex flex-col gap-6 w-full max-w-sm mx-auto mt-10 text-left">
+      <!-- Name field anchors the flow and validates length. -->
+      <p-floatLabel variant="in">
+        <input
+          pInputText
+          id="name"
+          name="name"
+          type="text"
+          formControlName="name"
+          autocomplete="off"
+          fluid
+          pSize="small"
+          [pAutoFocus]="true"
+          [invalid]="isInvalid('name')" />
+        <label for="name">Full Name</label>
+      </p-floatLabel>
+      @if (isInvalid('name')) {
+        <p-message severity="error" size="small" variant="simple" class="-mt-5">
+          @if (form.get('name')?.errors?.['required']) {
+            Name is required.
+          } @else if (form.get('name')?.errors?.['minlength']) {
+            Minimum 3 characters.
+          } @else if (form.get('name')?.errors?.['maxlength']) {
+            Maximum 60 characters.
+          }
+        </p-message>
+      }
+
+      <!-- Username reuses the shared validator so messaging matches login. -->
+      <p-floatLabel variant="in">
+        <input
+          pInputText
+          id="username"
+          name="username"
+          type="text"
+          formControlName="username"
+          autocomplete="off"
+          fluid
+          pSize="small"
+          [invalid]="isInvalid('username')" />
+        <label for="username">Username</label>
+      </p-floatLabel>
+      @if (isInvalid('username')) {
+        <p-message severity="error" size="small" variant="simple" class="-mt-5">
+          @if (form.get('username')?.errors?.['required']) {
+            Username is required.
+          } @else if (form.get('username')?.errors?.['spaceNotAllowed']) {
+            Spaces are not allowed.
+          } @else if (form.get('username')?.errors?.['invalidChars']) {
+            Only letters, numbers, _ allowed.
+          } @else if (form.get('username')?.errors?.['minlength']) {
+            Minimum 4 characters.
+          } @else if (form.get('username')?.errors?.['maxlength']) {
+            Maximum 20 characters.
+          }
+        </p-message>
+      }
+
+      <!-- Password field enforces complexity hints. -->
+      <p-floatLabel variant="in">
+        <input
+          pInputText
+          id="password"
+          name="password"
+          type="password"
+          formControlName="password"
+          autocomplete="off"
+          fluid
+          pSize="small"
+          [invalid]="isInvalid('password')" />
+        <label for="password">Password</label>
+      </p-floatLabel>
+      @if (isInvalid('password')) {
+        <p-message severity="error" size="small" variant="simple" class="-mt-5">
+          @if (form.get('password')?.errors?.['required']) {
+            Password is required.
+          }
+          @if (form.get('password')?.errors?.['spaceNotAllowed']) {
+            Spaces are not allowed.
+          } @else if (form.get('password')?.errors?.['numberRequired']) {
+            Must include a number.
+          } @else if (form.get('password')?.errors?.['minlength']) {
+            Minimum 6 characters.
+          } @else if (form.get('password')?.errors?.['maxlength']) {
+            Maximum 12 characters.
+          }
+        </p-message>
+      }
+
+      <!-- Confirm password mirrors custom validators for consistency. -->
+      <p-floatLabel variant="in">
+        <input
+          pInputText
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          autocomplete="off"
+          fluid
+          pSize="small"
+          [invalid]="passwordMismatch() || confirmPasswordRequired()" />
+        <label for="confirmPassword">Confirm Password</label>
+      </p-floatLabel>
+      @if (confirmPasswordRequired()) {
+        <p-message severity="error" size="small" variant="simple" class="-mt-5">
+          Confirm password is required.
+        </p-message>
+      } @else if (passwordMismatch()) {
+        <p-message severity="error" size="small" variant="simple" class="-mt-5">
+          Passwords must match.
+        </p-message>
+      }
+
+      <!-- Avatar upload couples component state with form validation hints. -->
+      <div class="signup-image-uploader">
+        <app-image-uploader
+          triggerLabel="Upload profile image"
+          [maxUploadSize]="profileSizeLimitBytes"
+          aspectRatio="1:1"
+          (imageChange)="handleImageChange($event)">
+        </app-image-uploader>
+        <div class="signup-image-feedback">
+          @if (imageMessage()) {
+            <p-message severity="error" size="small" variant="simple">
+              {{ imageMessage() }}
+            </p-message>
+          } @else if (isInvalid('profile')) {
+            <p-message severity="error" size="small" variant="simple">
+              Profile picture is required.
+            </p-message>
+          } @else if (imageState() === 'success') {
+            <p-message severity="success" size="small" variant="simple">
+              Profile image ready.
+            </p-message>
+          }
+        </div>
+      </div>
+
+      <!-- Primary action indicates progress textually instead of relying on spinners. -->
+      <button
+        pButton
+        type="submit"
+        class="w-full"
+        [disabled]="isSubmitting()"
+        [loading]="isSubmitting()">
+        <span pButtonLabel>
+          {{ isSubmitting() ? 'Creating...' : 'Create Account' }}
+        </span>
+      </button>
+    </form>
+  </p-card>
+</section>

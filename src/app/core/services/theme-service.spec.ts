@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+
 import { ThemeService, ThemeType } from './theme-service';
 
 describe('ThemeService (Jest)', () => {
@@ -77,14 +78,14 @@ describe('ThemeService (Jest)', () => {
       jest.spyOn(Date.prototype, 'getHours').mockReturnValue(22);
       service.initTheme();
       expect(localStorage.getItem('theme')).toBe('auto');
-      expect(htmlElement.classList.contains('dark')).toBe(false); // matches current logic
+      expect(htmlElement.classList.contains('dark')).toBe(true); // matches current logic
     });
 
-    it('should set dark theme for daytime (6am - 6pm)', () => {
+    it('should set light theme for daytime (6am - 6pm)', () => {
       localStorage.setItem('theme', 'auto');
       jest.spyOn(Date.prototype, 'getHours').mockReturnValue(10); // 10AM
       service.initTheme();
-      expect(htmlElement.classList.contains('dark')).toBe(true); // matches current logic
+      expect(htmlElement.classList.contains('dark')).toBe(false); // matches current logic
     });
 
     it('should not throw if <html> element is missing', () => {

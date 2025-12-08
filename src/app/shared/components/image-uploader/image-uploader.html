@@ -1,0 +1,111 @@
+<!-- Trigger button mirrors selection state so users know if an image is ready. -->
+<button
+  pButton
+  type="button"
+  class="image-uploader__trigger"
+  [severity]="buttonSeverity()"
+  (click)="openDialog()"
+  [outlined]="state() === 'empty'">
+  <i [attr.class]="'image-uploader__trigger-icon ' + buttonIcon()" aria-hidden="true"></i>
+  <span>{{ triggerLabel() }}</span>
+</button>
+
+<!-- Dialog hosts the drag-and-drop workflow and preview canvas. -->
+<p-dialog
+  [header]="triggerLabel()"
+  [visible]="dialogVisible()"
+  (visibleChange)="handleVisibleChange($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  style="width: min(90vw, 520px)">
+  <div class="image-uploader__dialog">
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      class="image-uploader__file"
+      (change)="handleFileInputChange($event)" />
+
+    <div class="image-uploader__content">
+      @if (state() === 'success' && previewUrl()) {
+        <!-- When an image exists we show the preview with a hover overlay for replacement. -->
+        <div
+          class="image-uploader__preview image-uploader__preview--filled"
+          [class.image-uploader__preview--active]="dragActive()"
+          [style.aspect-ratio]="aspectRatioCss()"
+          (dragover)="handleDragOver($event)"
+          (dragleave)="handleDragLeave($event)"
+          (drop)="handleDrop($event)"
+          tabindex="0"
+          role="button"
+          aria-label="Image preview. Click or drop to replace your image.">
+          <img [src]="previewUrl()" alt="Selected image preview" />
+          <div
+            class="image-uploader__preview-overlay"
+            [class.image-uploader__preview-overlay--visible]="dragActive()">
+            <p>Drag & Drop your image here</p>
+            <small>Or browse for another shot</small>
+            <button
+              #browseButton
+              pButton
+              type="button"
+              size="small"
+              (click)="browseFiles(fileInput)">
+              Browse files
+            </button>
+          </div>
+        </div>
+      } @else {
+        <!-- Empty state focuses on dropzone affordances and alternative browse control. -->
+        <div
+          class="image-uploader__dropzone"
+          [class.image-uploader__dropzone--active]="dragActive()"
+          (dragover)="handleDragOver($event)"
+          (dragleave)="handleDragLeave($event)"
+          (drop)="handleDrop($event)">
+          <i class="pi pi-cloud-upload" aria-hidden="true"></i>
+          <p>Drag & Drop your image here</p>
+          <small>or</small>
+          <button
+            #browseButton
+            pButton
+            type="button"
+            severity="secondary"
+            size="small"
+            (click)="browseFiles(fileInput)">
+            Browse files
+          </button>
+        </div>
+      }
+    </div>
+
+    @if (validationMessage()) {
+      <!-- Validation alert mirrors parent form errors for consistent messaging. -->
+      <p-message severity="error" variant="simple" size="small" class="mt-3">
+        {{ validationMessage() }}
+      </p-message>
+    }
+
+    <!-- Helper copy clarifies constraints and current file metadata. -->
+    <div class="image-uploader__helper">
+      <p>We securely accept images up to {{ maxUploadSizeLabel() }}.</p>
+      <p>Your preview uses a {{ aspectRatioLabel() }} frame for pixel-perfect layouts.</p>
+      @if (selectedFile()) {
+        <p>
+          Currently selected:
+          <strong>{{ selectedFile()?.name }}</strong>
+        </p>
+      }
+    </div>
+
+    <!-- Footer actions let users clear or close without ambiguity. -->
+    <div class="image-uploader__actions">
+      @if (state() === 'success') {
+        <button pButton type="button" severity="secondary" (click)="clearSelection()">Clear</button>
+      }
+      <button pButton type="button" severity="primary" (click)="closeDialog()">Done</button>
+    </div>
+  </div>
+</p-dialog>

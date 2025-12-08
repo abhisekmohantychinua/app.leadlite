@@ -1,0 +1,31 @@
+:host {
+  .login-submit-button {
+    width: 100%;
+  }
+
+  .login-reset-divider {
+    width: min(320px, 100%);
+    margin: 2rem auto 1.25rem;
+  }
+
+  .login-reset-divider__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: color-mix(in srgb, var(--p-red-500) 85%, black);
+  }
+
+  .login-reset-action {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 24rem;
+    margin: 0 auto;
+
+    app-reset-entirely {
+      display: inline-flex;
+      width: 100%;
+    }
+  }
+}

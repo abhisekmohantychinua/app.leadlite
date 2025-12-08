@@ -1,0 +1,108 @@
+<!-- Split hero + form layout keeps brand artwork visible on large screens while centering the card on mobile. -->
+<section
+  class="h-screen w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center p-4 gap-8 lg:gap-4 bg-surface-50 dark:bg-surface-950">
+  <!-- Floating theme toggle stays accessible regardless of scroll position. -->
+  <app-theme-toggle class="fixed top-4 right-4 lg:right-16"></app-theme-toggle>
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Brand lockup doubles as decorative art and accessible caption. -->
+  <figure class="lg:max-w-sm xl:max-w-md lg:w-full relative">
+    <img src="/Lead Lite Large Square.svg" alt="Lead Lite" class="aspect-square w-full z-0" />
+    <figcaption class="absolute top-1/2 left-1/2 translate-1/2 -z-10 invisible">
+      Lead Lite - Only What You Need
+    </figcaption>
+  </figure>
+
+  <!-- Login card narrows content width to keep the form easy to scan. -->
+  <p-card class="w-full max-w-lg px-2 py-4 text-center">
+    <ng-template #title>Login</ng-template>
+    <form
+      pFocusTrap
+      [formGroup]="form"
+      (ngSubmit)="handleLoginFormSubmit()"
+      class="flex flex-col gap-6 w-full max-w-sm mx-auto mt-10">
+      <!-- Username field surfaces granular errors for accessibility. -->
+      <p-floatLabel variant="in">
+        <input
+          pInputText
+          id="username"
+          name="username"
+          type="text"
+          formControlName="username"
+          autocomplete="off"
+          fluid
+          pSize="small"
+          [pAutoFocus]="true"
+          [invalid]="isInvalid('username')" />
+        <label for="username">Username</label>
+      </p-floatLabel>
+      @if (isInvalid('username')) {
+        <p-message severity="error" size="small" variant="simple" class="-mt-5">
+          @if (form.get('username')?.errors?.['required']) {
+            Username is required.
+          } @else if (form.get('username')?.errors?.['spaceNotAllowed']) {
+            Spaces are not allowed.
+          } @else if (form.get('username')?.errors?.['invalidChars']) {
+            Only letters, numbers, _ allowed.
+          } @else if (form.get('username')?.errors?.['minlength']) {
+            Minimum 4 characters.
+          } @else if (form.get('username')?.errors?.['maxlength']) {
+            Maximum 20 characters.
+          }
+        </p-message>
+      }
+
+      <!-- Password field mirrors username logic for consistent feedback. -->
+      <p-floatLabel variant="in">
+        <input
+          pInputText
+          id="password"
+          name="password"
+          type="password"
+          formControlName="password"
+          autocomplete="off"
+          fluid
+          pSize="small"
+          [invalid]="isInvalid('password')" />
+        <label for="password">Password</label>
+      </p-floatLabel>
+
+      @if (isInvalid('password')) {
+        <p-message severity="error" size="small" variant="simple" class="-mt-5">
+          @if (form.get('password')?.errors?.['required']) {
+            Password is required.
+          }
+          @if (form.get('password')?.errors?.['spaceNotAllowed']) {
+            Spaces are not allowed.
+          } @else if (form.get('password')?.errors?.['numberRequired']) {
+            Must include a number.
+          } @else if (form.get('password')?.errors?.['minlength']) {
+            Minimum 6 characters.
+          } @else if (form.get('password')?.errors?.['maxlength']) {
+            Maximum 12 characters.
+          }
+        </p-message>
+      }
+
+      <!-- Primary action uses default button styling for clarity. -->
+      <button
+        pButton
+        type="submit"
+        class="login-submit-button"
+        [disabled]="isSubmitting()"
+        [loading]="isSubmitting()">
+        <span pButtonLabel>{{ isSubmitting() ? 'Signing in...' : 'Submit' }}</span>
+      </button>
+    </form>
+
+    <!-- Prime divider matches the rest of the UI kit and labels the danger zone. -->
+    <p-divider align="center" class="login-reset-divider">
+      <span class="login-reset-divider__label">Danger zone</span>
+    </p-divider>
+
+    <!-- Reuses the global reset component so both auth screens share the same UX. -->
+    <div class="login-reset-action">
+      <app-reset-entirely></app-reset-entirely>
+    </div>
+  </p-card>
+</section>

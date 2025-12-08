@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import type { Signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 
 // Define the theme type
 export type ThemeType = 'light' | 'dark' | 'system' | 'auto';
@@ -7,6 +8,21 @@ export type ThemeType = 'light' | 'dark' | 'system' | 'auto';
   providedIn: 'root',
 })
 export class ThemeService {
+  private currentTheme = signal<ThemeType>('auto');
+
+  /**
+   * Returns a signal that represents the current theme of the application.
+   * The current theme is determined based on the following order of preference:
+   * 1. The theme stored in localStorage
+   * 2. The system theme (i.e. prefers-color-scheme: dark)
+   * 3. Whether it is day or night (i.e. between 6am and 6pm)
+   * @returns a signal that emits the current theme
+   */
+
+  getCurrentTheme(): Signal<ThemeType> {
+    return computed(() => this.currentTheme());
+  }
+
   /**
    * Initialize the theme of the application.
    * The theme is determined based on the following order of preference:
@@ -25,17 +41,21 @@ export class ThemeService {
     switch (theme) {
       case 'light':
         isDark = false;
+        this.currentTheme.set('light');
         break;
       case 'dark':
         isDark = true;
+        this.currentTheme.set('dark');
         break;
       case 'system':
         isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        this.currentTheme.set('system');
         break;
       default: {
         // Define theme based on whether its day or night
+        this.currentTheme.set('auto');
         const currentTime = new Date().getHours();
-        isDark = currentTime >= 6 && currentTime < 18;
+        isDark = currentTime < 6 || currentTime >= 18;
         break;
       }
     }

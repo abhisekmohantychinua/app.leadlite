@@ -1,0 +1,16 @@
+<!-- Button For Triggering Menu -->
+<p-button
+  [label]="selectedMenuSig().label"
+  [icon]="selectedMenuSig().icon"
+  (click)="themeToggle.toggle($event)"
+  variant="outlined"
+  severity="secondary"></p-button>
+
+<!-- Menu -->
+<p-menu
+  #themeToggle
+  [style]="{ right: '0', top: '3rem', maxWidth: 'fit-content' }"
+  baseZIndex="10"
+  [popup]="true"
+  [model]="menuItems"
+  appendTo="body"></p-menu>
