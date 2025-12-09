@@ -18,7 +18,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-
+import { NgOptimizedImage } from '@angular/common';
 import { UserService } from '../../core/services/user-service';
 import type {
   ImageUploadChange,
@@ -51,6 +51,7 @@ interface SignupFormValue {
     ThemeToggle,
     ImageUploader,
     ToastModule,
+    NgOptimizedImage,
   ],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',

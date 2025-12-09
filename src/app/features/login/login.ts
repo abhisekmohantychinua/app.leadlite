@@ -13,7 +13,7 @@ import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { PopoverModule } from 'primeng/popover';
-
+import { NgOptimizedImage } from '@angular/common';
 import { UserService } from '../../core/services/user-service';
 import { ResetEntirely } from '../../shared/components/reset-entirely/reset-entirely';
 import { ThemeToggle } from '../../shared/components/theme-toggle/theme-toggle';
@@ -35,6 +35,7 @@ import { CustomValidators } from '../../shared/validators/custom-validators';
     ThemeToggle,
     ResetEntirely,
     ToastModule,
+    NgOptimizedImage,
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
