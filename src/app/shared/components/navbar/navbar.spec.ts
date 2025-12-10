@@ -1,0 +1,48 @@
+import { NgOptimizedImage } from '@angular/common';
+import { Component } from '@angular/core';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { ButtonModule } from 'primeng/button';
+
+import { Navbar } from './navbar';
+
+jest.mock('nanoid', () => ({
+  nanoid: jest.fn(),
+}));
+
+@Component({
+  selector: 'app-theme-toggle',
+  template: '<div data-testid="theme-toggle"></div>',
+})
+class ThemeToggleStub {}
+
+@Component({
+  selector: 'app-profile',
+  template: '<div data-testid="profile"></div>',
+})
+class ProfileStub {}
+
+describe('Navbar', () => {
+  let component: Navbar;
+  let fixture: ComponentFixture<Navbar>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Navbar],
+    })
+      .overrideComponent(Navbar, {
+        set: {
+          imports: [ButtonModule, NgOptimizedImage, ThemeToggleStub, ProfileStub],
+        },
+      })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(Navbar);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

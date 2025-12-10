@@ -244,6 +244,14 @@ export class UserService {
   }
 
   /**
+   * Retrieves the single user profile stored on the device.
+   * Surfaces an observable that emits the user or errors when none exists.
+   */
+  getUser(): Observable<User> {
+    return defer(() => from(this.getUserAsync()));
+  }
+
+  /**
    * Validates an in-memory session key against the stored session hash.
    * Returns true when the hashes match, otherwise false.
    */
@@ -264,5 +272,11 @@ export class UserService {
 
     const computedHash = await this.cryptoService.hashSHA256Async(sessionKey);
     return computedHash === secret.sessionHash;
+  }
+
+  private async getUserAsync(): Promise<User> {
+    const user = await this.userDb.toCollection().first();
+    if (!user) throw new Error('User not found');
+    return user;
   }
 }

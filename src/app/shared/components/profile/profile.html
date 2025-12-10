@@ -1,0 +1,97 @@
+<section class="profile-shell">
+    <p-button
+      type="button"
+      severity="secondary"
+      rounded
+      size="small"
+      variant="outlined"
+      styleClass="p-1"
+      [attr.aria-label]="triggerLabelSig()"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="sidebarVisible()"
+      [disabled]="!!errorSig()"
+      (click)="openSidebar()">
+      @if (avatarSrcSig()) {
+        <p-avatar
+          shape="circle"
+          size="normal"
+          [image]="avatarSrcSig()!"
+          aria-hidden="true"
+          ></p-avatar>
+      } @else {
+        <p-avatar
+          shape="circle"
+          size="large"
+          [label]="initialsSig()"
+          aria-hidden="true"
+          ></p-avatar>
+      }
+    </p-button>
+
+    @if (errorSig()) {
+      <p class="text-xs text-rose-400" role="status">{{ errorSig() }}</p>
+    }
+  </section>
+  <!-- TODO: Remove unnecessary Tailwind and use Primeng -->
+  <p-drawer
+    header="Profile"
+    position="right"
+    [visible]="sidebarVisible()"
+    (visibleChange)="handleVisibilityChange($event)"
+    [modal]="true"
+    [dismissible]="true"
+    [blockScroll]="true"
+    [closeOnEscape]="true"
+    styleClass="">
+    <section class="flex flex-col items-center gap-3 sm:gap-4">
+      <div class="profile-drawer__avatar-wrapper flex w-full justify-center">
+        @if (avatarSrcSig()) {
+          <p-avatar
+            shape="circle"
+            size="xlarge"
+            styleClass="profile-drawer__avatar w-40 h-40 text-4xl font-semibold border-4 border-primary-600 bg-slate-50 text-primary-800 shadow-2xl shadow-slate-200/80 ring-2 ring-white/80 dark:border-primary-200 dark:bg-slate-900 dark:text-primary-100 dark:shadow-slate-950/70 dark:ring-white/10"
+            [image]="avatarSrcSig()!"
+            aria-label="User profile image"></p-avatar>
+        } @else {
+          <p-avatar
+            shape="circle"
+            size="xlarge"
+            styleClass="profile-drawer__avatar w-40 h-40 text-4xl font-semibold border-4 border-primary-600 bg-slate-50 text-primary-800 shadow-2xl shadow-slate-200/80 ring-2 ring-white/80 dark:border-primary-200 dark:bg-slate-900 dark:text-primary-100 dark:shadow-slate-950/70 dark:ring-white/10"
+            [label]="initialsSig()"
+            aria-label="User profile initials"></p-avatar>
+        }
+      </div>
+
+      <div class="flex flex-col items-center gap-0.5 text-center">
+        <p class="profile-drawer__name text-xl font-semibold tracking-tight text-primary-900 dark:text-primary-100">
+          {{ userSig()?.name }}
+        </p>
+        <p class="profile-drawer__username text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+          <span class="profile-drawer__username-prefix text-primary-300 dark:text-primary-400" aria-hidden="true">@</span>
+          <span class="profile-drawer__username-text text-slate-600 dark:text-slate-200">
+            {{ userSig()?.username }}
+          </span>
+        </p>
+      </div>
+
+      @if (profileMetaSig()) {
+        <div class="profile-drawer__meta w-full rounded-2xl border border-slate-200/60 bg-white/85 px-4 py-3 text-xs flex flex-col gap-1.5 shadow-sm shadow-slate-200/60 backdrop-blur dark:border-white/10 dark:bg-slate-900/60 dark:text-slate-200 dark:shadow-slate-950/40">
+          <p class="profile-drawer__meta-label text-[0.65rem] uppercase tracking-[0.15em] text-slate-400 mb-1 dark:text-slate-500">
+            Activity
+          </p>
+          <div class="profile-drawer__meta-row flex items-center justify-between gap-4 border-t border-dashed border-slate-200/60 pt-2 dark:border-slate-600/60">
+            <span class="profile-drawer__meta-chip text-[0.65rem] uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Created</span>
+            <span class="profile-drawer__meta-value text-slate-500 dark:text-slate-300">
+              {{ profileMetaSig()?.createdAtLabel }}
+            </span>
+          </div>
+          <div class="profile-drawer__meta-row flex items-center justify-between gap-4 border-t border-dashed border-slate-200/60 pt-2 dark:border-slate-600/60">
+            <span class="profile-drawer__meta-chip text-[0.65rem] uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Updated</span>
+            <span class="profile-drawer__meta-value text-slate-500 dark:text-slate-300">
+              {{ profileMetaSig()?.updatedAtLabel || '-' }}
+            </span>
+          </div>
+        </div>
+      }
+    </section>
+  </p-drawer>

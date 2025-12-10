@@ -1,0 +1,17 @@
+<p-toolbar>
+  <ng-template #start>
+    <div class="flex items-center justify-start gap-2 md:gap-4">
+      <p-button icon="pi pi-bars" rounded size="small" outlined severity="secondary" />
+      <a class="w-32 h-8" href="/" aria-label="Go to LeadLite home" title="LeadLite">
+        <img class="" [ngSrc]="logoSrc" width="160" height="40" priority alt="LeadLite" />
+      </a>
+    </div>
+  </ng-template>
+
+  <ng-template #end>
+    <div class="flex items-center justify-start gap-2 md:gap-4">
+      <app-theme-toggle class="navbar__toggle"></app-theme-toggle>
+      <app-profile class="navbar__profile"></app-profile>
+    </div>
+  </ng-template>
+</p-toolbar>

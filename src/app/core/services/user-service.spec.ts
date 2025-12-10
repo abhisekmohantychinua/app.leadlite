@@ -26,6 +26,7 @@ interface MockTable<T = unknown, K = unknown> {
   get?: jest.Mock<Promise<T | undefined>, [K?]>;
   put?: jest.Mock<Promise<void>, [T]>;
   count?: jest.Mock<Promise<number>, []>;
+  toCollection?: jest.Mock;
   db?: { transaction: jest.Mock<Promise<void>, [string, ...MockTable[], () => Promise<void>]> };
 }
 
@@ -50,6 +51,9 @@ describe('UserService', () => {
       clear: jest.fn().mockResolvedValue(undefined),
       update: jest.fn().mockResolvedValue(1),
       count: jest.fn().mockResolvedValue(0),
+      toCollection: jest.fn().mockReturnValue({
+        first: jest.fn().mockResolvedValue(undefined),
+      }),
       db: {
         transaction: jest
           .fn()
@@ -339,6 +343,57 @@ describe('UserService', () => {
         .fn()
         .mockResolvedValue({ id: 1, userSalt: 's', sessionHash: 'sha256(other)' });
       await expect(call$('active-key')).resolves.toBe(false);
+    });
+  });
+
+  describe('getUser', () => {
+    const sampleUser: User = {
+      id: 'user-1',
+      username: 'alice',
+      name: 'Alice',
+      password: 'hashed',
+      profile: { size: 10 } as File,
+      createdAt: new Date('2023-01-01T00:00:00.000Z'),
+      lastModifiedAt: undefined,
+    };
+
+    it('should emit the stored user profile', async () => {
+      mockUserTable.toCollection?.mockReturnValue({
+        first: jest.fn().mockResolvedValue(sampleUser),
+      });
+
+      await expect(firstValueFrom(service.getUser())).resolves.toEqual(sampleUser);
+    });
+
+    it('should error when a user record is missing', async () => {
+      mockUserTable.toCollection?.mockReturnValue({
+        first: jest.fn().mockResolvedValue(undefined),
+      });
+
+      await expect(firstValueFrom(service.getUser())).rejects.toThrow('User not found');
+    });
+  });
+
+  describe('getUserAsync', () => {
+    const callAsync = () =>
+      (service as unknown as { getUserAsync: () => Promise<User> }).getUserAsync();
+
+    it('should resolve the user when available', async () => {
+      const stored: User = {
+        id: 'id-9',
+        username: 'primary',
+        name: 'Primary User',
+        password: 'hashed',
+        profile: { size: 10 } as File,
+        createdAt: new Date(),
+        lastModifiedAt: undefined,
+      };
+
+      mockUserTable.toCollection?.mockReturnValue({
+        first: jest.fn().mockResolvedValue(stored),
+      });
+
+      await expect(callAsync()).resolves.toEqual(stored);
     });
   });
 });
