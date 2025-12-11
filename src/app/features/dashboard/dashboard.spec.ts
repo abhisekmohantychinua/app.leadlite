@@ -2,6 +2,7 @@ import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 import { Dashboard } from './dashboard';
 
@@ -14,7 +15,7 @@ describe('Dashboard', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Dashboard],
-      providers: [provideRouter([]), provideNoopAnimations()],
+      providers: [provideRouter([]), provideNoopAnimations(), MessageService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Dashboard);

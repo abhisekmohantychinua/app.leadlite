@@ -76,6 +76,7 @@ export default class Login {
         next: () => {
           this.isSubmitting.set(false);
           this.messageService.add({
+            key: 'app-toast',
             severity: 'success',
             summary: 'Login successful',
             detail: 'Redirecting you now.',
@@ -85,6 +86,7 @@ export default class Login {
         error: (error: Error) => {
           this.isSubmitting.set(false);
           this.messageService.add({
+            key: 'app-toast',
             severity: 'error',
             summary: 'Login failed',
             detail: error?.message ?? 'Please verify your credentials and try again.',

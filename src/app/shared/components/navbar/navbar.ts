@@ -13,11 +13,5 @@ import { ThemeToggle } from '../theme-toggle/theme-toggle';
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    class: 'navbar-host block w-full',
-  },
 })
-export class Navbar {
-  protected readonly logoSrc = '/Lead Lite Large Rectangle.svg';
-  protected readonly menuLabel = 'Open navigation menu';
-}
+export class Navbar {}

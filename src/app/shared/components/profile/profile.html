@@ -97,5 +97,25 @@
           </div>
         </div>
       }
+
+      <p-divider class="w-full" />
+
+      <div class="flex w-full flex-col gap-2">
+        <p-button
+          type="button"
+          icon="pi pi-sign-out"
+          label="Log out"
+          severity="danger"
+          [loading]="isLoggingOut()"
+          styleClass="profile-drawer__logout-button w-full"
+          (click)="handleLogout()"
+        ></p-button>
+
+        @if (logoutErrorSig()) {
+          <p class="profile-drawer__logout-error text-sm text-rose-500" role="status">
+            {{ logoutErrorSig() }}
+          </p>
+        }
+      </div>
     </section>
   </p-drawer>

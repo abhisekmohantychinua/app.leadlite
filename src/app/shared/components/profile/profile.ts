@@ -1,3 +1,4 @@
+import type { OnDestroy } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,12 +8,14 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { Avatar } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { Drawer } from 'primeng/drawer';
-import { TagModule } from 'primeng/tag';
+import type { Subscription } from 'rxjs';
 import { catchError, of } from 'rxjs';
 
 import type { User } from '../../../core/models/user';
@@ -25,19 +28,24 @@ const PROFILE_DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
 
 @Component({
   selector: 'app-profile',
-  imports: [ButtonModule, Avatar, Drawer, CardModule, DividerModule, TagModule],
+  imports: [ButtonModule, Avatar, Drawer, CardModule, DividerModule],
   templateUrl: './profile.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'profile-component',
   },
 })
-export class Profile {
+export class Profile implements OnDestroy {
   private readonly userService = inject(UserService);
+  private readonly messageService = inject(MessageService);
+  private logoutSubscription: Subscription | null = null;
 
   protected readonly sidebarVisible = signal(false);
   protected readonly errorSig = signal<string | null>(null);
+  protected readonly logoutErrorSig = signal<string | null>(null);
   protected readonly avatarSrcSig = signal<string | null>(null);
+  protected readonly isLoggingOut = signal(false);
+  protected readonly router = inject(Router);
 
   protected readonly userSig = toSignal<User | null>(
     this.userService.getUser().pipe(
@@ -98,6 +106,11 @@ export class Profile {
     });
   }
 
+  ngOnDestroy(): void {
+    this.logoutSubscription?.unsubscribe();
+    this.logoutSubscription = null;
+  }
+
   protected openSidebar(): void {
     if (this.errorSig()) return;
     this.sidebarVisible.set(true);
@@ -109,5 +122,41 @@ export class Profile {
 
   protected handleVisibilityChange(visible: boolean): void {
     this.sidebarVisible.set(visible);
+  }
+
+  protected handleLogout(): void {
+    this.logoutSubscription?.unsubscribe();
+    this.logoutSubscription = null;
+    this.logoutErrorSig.set(null);
+    this.isLoggingOut.set(true);
+
+    this.logoutSubscription = this.userService.logoutUser().subscribe({
+      next: () => {
+        this.isLoggingOut.set(false);
+        this.closeSidebar();
+        this.messageService.add({
+          key: 'app-toast',
+          severity: 'success',
+          summary: 'Logged out',
+          detail: 'Your session has ended.',
+          life: 3000,
+        });
+        this.router.navigate(['/login']);
+      },
+      error: (error: unknown) => {
+        const message = error instanceof Error ? error.message : 'Failed to log out.';
+        this.isLoggingOut.set(false);
+        this.logoutErrorSig.set(message);
+        this.messageService.add({
+          key: 'app-toast',
+          severity: 'error',
+          summary: 'Logout failed',
+          detail: message,
+        });
+      },
+      complete: () => {
+        this.logoutSubscription = null;
+      },
+    });
   }
 }

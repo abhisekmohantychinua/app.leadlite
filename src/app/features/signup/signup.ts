@@ -158,6 +158,7 @@ export default class Signup {
         next: () => {
           this.isSubmitting.set(false);
           this.messageService.add({
+            key: 'app-toast',
             severity: 'success',
             summary: 'Account created',
             detail: 'You can log in now.',
@@ -168,6 +169,7 @@ export default class Signup {
         error: (error: Error) => {
           this.isSubmitting.set(false);
           this.messageService.add({
+            key: 'app-toast',
             severity: 'error',
             summary: 'Signup failed',
             detail: error?.message ?? 'Failed to create user.',
