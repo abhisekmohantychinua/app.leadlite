@@ -1,0 +1,1 @@
+import{Pb as o,Ya as s,sb as i,tb as a}from"./chunk-TBMMB432.js";var t=class n{static \u0275fac=function(e){return new(e||n)};static \u0275cmp=s({type:n,selectors:[["app-clients"]],decls:2,vars:0,template:function(e,c){e&1&&(i(0,"p"),o(1,"clients works!"),a())},encapsulation:2})};export{t as default};
