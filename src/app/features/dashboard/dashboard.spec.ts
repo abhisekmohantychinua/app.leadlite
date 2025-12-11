@@ -1,8 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { Dashboard } from './dashboard';
 
-jest.mock('nanoid', () => ({ nanoid: () => 'mock-id' }));
+jest.mock('nanoid', () => ({ nanoid: (): string => 'mock-id' }));
 
 describe('Dashboard', () => {
   let component: Dashboard;

@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
+import type { ElementRef } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
-  ViewChild,
   computed,
+  DestroyRef,
   inject,
   input,
   output,
   signal,
+  ViewChild,
 } from '@angular/core';
-import type { ElementRef } from '@angular/core';
+import { PrimeIcons } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
-import { PrimeIcons } from 'primeng/api';
 
 export type ImageUploaderAspectRatio = '1:1' | '16:9' | '4:5';
 export type ImageUploaderState = 'empty' | 'success' | 'error';

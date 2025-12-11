@@ -8,7 +8,7 @@ import { firstValueFrom, of, throwError } from 'rxjs';
 import { UserService } from '../services/user-service';
 import { loginGuard } from './login-guard';
 
-jest.mock('nanoid', () => ({ nanoid: () => 'mock-id' }));
+jest.mock('nanoid', () => ({ nanoid: (): string => 'mock-id' }));
 
 describe('loginGuard', () => {
   let router: Router;

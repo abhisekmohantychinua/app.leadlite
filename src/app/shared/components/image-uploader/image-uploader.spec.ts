@@ -1,9 +1,9 @@
-import { TestBed } from '@angular/core/testing';
 import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
-import { ImageUploader } from './image-uploader';
 import type { ImageUploadChange } from './image-uploader';
+import { ImageUploader } from './image-uploader';
 
 const createMockFile = (name: string, size: number, type = 'image/png'): File => {
   const data = new Uint8Array(size);

@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { nanoid } from 'nanoid';
 import { firstValueFrom } from 'rxjs';
-import { UserService } from './user-service';
+
+import type { Secret } from '../models/secret';
+import type { User } from '../models/user';
+import type { UserRequest } from '../models/user-request';
+import type { UserUpdateRequest } from '../models/user-update-request';
 import { DexieRepository } from '../repository/dexie-repository';
 import { CryptoService } from './crypto-service';
-import { nanoid } from 'nanoid';
-import { Secret } from '../models/secret';
-import { User } from '../models/user';
-import { UserRequest } from '../models/user-request';
-import { UserUpdateRequest } from '../models/user-update-request';
+import { UserService } from './user-service';
 
 // Mock nanoid
 jest.mock('nanoid', () => ({
@@ -139,7 +140,7 @@ describe('UserService', () => {
   });
 
   describe('createUserAsync', () => {
-    const callAsync = (u: UserRequest) =>
+    const callAsync = (u: UserRequest): Promise<User> =>
       (
         service as unknown as { createUserAsync: (x: UserRequest) => Promise<User> }
       ).createUserAsync(u);
@@ -196,7 +197,7 @@ describe('UserService', () => {
   });
 
   describe('updateUserAsync', () => {
-    const callAsync = (username: string, req: UserUpdateRequest) =>
+    const callAsync = (username: string, req: UserUpdateRequest): Promise<User> =>
       (
         service as unknown as {
           updateUserAsync: (u: string, r: UserUpdateRequest) => Promise<User>;
@@ -252,7 +253,7 @@ describe('UserService', () => {
   });
 
   describe('loginUserAsync', () => {
-    const callAsync = (u: string, p: string) =>
+    const callAsync = (u: string, p: string): Promise<string> =>
       (
         service as unknown as { loginUserAsync: (u: string, p: string) => Promise<string> }
       ).loginUserAsync(u, p);
@@ -286,7 +287,7 @@ describe('UserService', () => {
   });
 
   describe('logoutUserAsync', () => {
-    const callAsync = () =>
+    const callAsync = (): Promise<void> =>
       (service as unknown as { logoutUserAsync: () => Promise<void> }).logoutUserAsync();
 
     it('should remove sessionKey and clear secret hash', async () => {
@@ -308,7 +309,7 @@ describe('UserService', () => {
   });
 
   describe('hasExistingUser', () => {
-    const call$ = () => firstValueFrom(service.hasExistingUser());
+    const call$ = (): Promise<boolean> => firstValueFrom(service.hasExistingUser());
 
     it('should return false when there are no users', async () => {
       mockUserTable.count?.mockResolvedValueOnce(0);
@@ -322,7 +323,8 @@ describe('UserService', () => {
   });
 
   describe('validateSessionKey', () => {
-    const call$ = (key: string) => firstValueFrom(service.validateSessionKey(key));
+    const call$ = (key: string): Promise<boolean> =>
+      firstValueFrom(service.validateSessionKey(key));
 
     it('should return true when stored hash matches provided session key', async () => {
       mockSecretTable.get = jest
@@ -375,7 +377,7 @@ describe('UserService', () => {
   });
 
   describe('getUserAsync', () => {
-    const callAsync = () =>
+    const callAsync = (): Promise<User> =>
       (service as unknown as { getUserAsync: () => Promise<User> }).getUserAsync();
 
     it('should resolve the user when available', async () => {

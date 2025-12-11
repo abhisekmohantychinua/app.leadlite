@@ -1,4 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -8,7 +9,7 @@ import { UserService } from '../../core/services/user-service';
 import type { ImageUploadChange } from '../../shared/components/image-uploader/image-uploader';
 import Signup from './signup';
 
-jest.mock('nanoid', () => ({ nanoid: () => 'mock-id' }));
+jest.mock('nanoid', () => ({ nanoid: (): string => 'mock-id' }));
 
 describe('Signup', () => {
   let component: Signup;

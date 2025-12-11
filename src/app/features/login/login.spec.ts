@@ -8,7 +8,7 @@ import { of, throwError } from 'rxjs';
 import { UserService } from '../../core/services/user-service';
 import Login from './login';
 
-jest.mock('nanoid', () => ({ nanoid: () => 'mock-id' }));
+jest.mock('nanoid', () => ({ nanoid: (): string => 'mock-id' }));
 
 describe('Login', () => {
   let component: Login;

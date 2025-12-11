@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import type { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { firstValueFrom, of, throwError } from 'rxjs';
 import type { Observable } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 
 import { UserService } from '../services/user-service';
 import { authGuard } from './auth-guard';

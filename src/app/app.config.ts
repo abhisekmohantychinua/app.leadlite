@@ -1,17 +1,13 @@
-import {
-  ApplicationConfig,
-  provideBrowserGlobalErrorListeners,
-  provideZoneChangeDetection,
-} from '@angular/core';
-import { provideRouter } from '@angular/router';
+import type { ApplicationConfig } from '@angular/core';
+import { provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { definePreset } from '@primeuix/themes';
+import Lara from '@primeuix/themes/lara';
 import { MessageService } from 'primeng/api';
+import { providePrimeNG } from 'primeng/config';
 
 import { routes } from './app.routes';
-
-import { providePrimeNG } from 'primeng/config';
-import Lara from '@primeuix/themes/lara';
-import { definePreset } from '@primeuix/themes';
 
 const MyPreset = definePreset(Lara, {
   semantic: {
