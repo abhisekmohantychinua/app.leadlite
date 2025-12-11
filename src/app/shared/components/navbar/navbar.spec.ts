@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { ButtonModule } from 'primeng/button';
+import { ToolbarModule } from 'primeng/toolbar';
 
 import { Navbar } from './navbar';
 
@@ -32,7 +33,7 @@ describe('Navbar', () => {
     })
       .overrideComponent(Navbar, {
         set: {
-          imports: [ButtonModule, NgOptimizedImage, ThemeToggleStub, ProfileStub],
+          imports: [ButtonModule, ToolbarModule, NgOptimizedImage, ThemeToggleStub, ProfileStub],
         },
       })
       .compileComponents();

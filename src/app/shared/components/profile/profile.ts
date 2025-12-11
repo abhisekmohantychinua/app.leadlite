@@ -9,7 +9,10 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Avatar } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
 import { Drawer } from 'primeng/drawer';
+import { TagModule } from 'primeng/tag';
 import { catchError, of } from 'rxjs';
 
 import type { User } from '../../../core/models/user';
@@ -22,9 +25,8 @@ const PROFILE_DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
 
 @Component({
   selector: 'app-profile',
-  imports: [ButtonModule, Avatar, Drawer],
+  imports: [ButtonModule, Avatar, Drawer, CardModule, DividerModule, TagModule],
   templateUrl: './profile.html',
-  styleUrl: './profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'profile-component',
