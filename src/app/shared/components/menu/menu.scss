@@ -1,0 +1,8 @@
+.menu__item.p-menuitem-link-active {
+  color: var(--p-primary-color);
+  font-weight: 600;
+}
+
+.menu__item.p-menuitem-link-active span:first-child {
+  color: inherit;
+}

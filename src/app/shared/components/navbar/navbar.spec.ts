@@ -23,6 +23,12 @@ class ThemeToggleStub {}
 })
 class ProfileStub {}
 
+@Component({
+  selector: 'app-menu',
+  template: '<div data-testid="menu"></div>',
+})
+class MenuStub {}
+
 describe('Navbar', () => {
   let component: Navbar;
   let fixture: ComponentFixture<Navbar>;
@@ -33,7 +39,14 @@ describe('Navbar', () => {
     })
       .overrideComponent(Navbar, {
         set: {
-          imports: [ButtonModule, ToolbarModule, NgOptimizedImage, ThemeToggleStub, ProfileStub],
+          imports: [
+            ButtonModule,
+            ToolbarModule,
+            NgOptimizedImage,
+            ThemeToggleStub,
+            ProfileStub,
+            MenuStub,
+          ],
         },
       })
       .compileComponents();

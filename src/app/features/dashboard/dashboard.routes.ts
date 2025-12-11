@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './dashboard';
 import { Home } from './home/home';
-import { Profile } from './profile/profile';
 
 const dashboardRoutes: Routes = [
   {
@@ -14,8 +13,21 @@ const dashboardRoutes: Routes = [
         component: Home,
       },
       {
-        path: 'profile',
-        component: Profile,
+        path: 'home',
+        redirectTo: '',
+        pathMatch: 'full',
+      },
+      {
+        path: 'leads',
+        loadComponent: () => import('./leads/leads'),
+      },
+      {
+        path: 'clients',
+        loadComponent: () => import('./clients/clients'),
+      },
+      {
+        path: 'projects',
+        loadComponent: () => import('./projects/projects'),
       },
     ],
   },

@@ -1,0 +1,45 @@
+<section class="menu-shell flex items-center">
+  <p-button
+    type="button"
+    icon="pi pi-bars"
+    severity="secondary"
+    variant="outlined"
+    rounded
+    size="small"
+    styleClass="menu__trigger"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="drawerVisible()"
+    aria-label="Open menu"
+    (click)="openDrawer()"></p-button>
+
+  <p-drawer
+    header="Menu"
+    position="left"
+    [visible]="drawerVisible()"
+    (visibleChange)="handleVisibilityChange($event)"
+    [modal]="true"
+    [dismissible]="true"
+    [blockScroll]="true"
+    [closeOnEscape]="true">
+    <p-menu [model]="menuItems" styleClass="menu__list border-0" [pAutoFocus]="true">
+      <ng-template #item let-item>
+        <a
+          pRipple
+          [routerLink]="item.routerLink"
+          routerLinkActive="p-menuitem-link-active"
+          [routerLinkActiveOptions]="item.routerLinkActiveOptions"
+          (click)="closeDrawer()"
+          class="menu__item group flex items-center p-menu-item-link">
+          <span [class]="item.icon"></span>
+          <span class="ml-2">{{ item.label }}</span>
+          @if (item.shortcut) {
+            <span
+              class="menu__shortcut ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1"
+              >{{ item.shortcut }}</span
+            >
+          }
+        </a>
+      </ng-template>
+    </p-menu>
+  </p-drawer>
+</section>
