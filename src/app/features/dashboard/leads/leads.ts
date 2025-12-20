@@ -49,4 +49,7 @@ export default class Leads {
   handleCreatedNewLead(): void {
     this.refresh.set(Symbol());
   }
+  handleUpdatedLead(): void {
+    this.refresh.set(Symbol());
+  }
 }

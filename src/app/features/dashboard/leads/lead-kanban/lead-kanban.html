@@ -4,7 +4,7 @@
   }}</p-message>
   <div class="flex flex-col items-center">
     @for (lead of leads(); track $index) {
-      <app-lead-card [lead]="lead"></app-lead-card>
+      <app-lead-card (leadUpdated)="handleLeadUpdated()" [lead]="lead"></app-lead-card>
     }
   </div>
 </div>

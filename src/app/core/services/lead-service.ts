@@ -2,13 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import type { Table } from 'dexie';
 import { nanoid } from 'nanoid';
 import type { Observable } from 'rxjs';
-import { defer } from 'rxjs';
+import { defer, from, map } from 'rxjs';
 
 import type { LeadRequest } from '../dto/lead-request';
 import type { SearchCriteria } from '../dto/search-criteria';
 import type { ContactDao } from '../models/contact';
 import { Contact } from '../models/contact';
-import type { LeadDao, LeadShallow } from '../models/lead';
+import type { LeadDao, LeadShallow, LeadStage } from '../models/lead';
 import { Lead } from '../models/lead';
 import type { NoteDao } from '../models/note';
 import { Note } from '../models/note';
@@ -23,10 +23,10 @@ import { TaskService } from './task-service';
   providedIn: 'root',
 })
 export class LeadService {
-  private leadDb: Table<LeadDao, string>;
-  private contactService: ContactService;
-  private taskService: TaskService;
-  private noteService: NoteService;
+  private readonly leadDb: Table<LeadDao, string>;
+  private readonly contactService: ContactService;
+  private readonly taskService: TaskService;
+  private readonly noteService: NoteService;
 
   constructor() {
     const db = inject(DexieRepository);
@@ -42,7 +42,7 @@ export class LeadService {
    * @returns An observable that emits an array of Lead objects.
    */
   getLeads(criteria: SearchCriteria): Observable<Lead[]> {
-    return defer(() => this.getLeadsAsync(criteria));
+    return defer(() => from(this.getLeadsAsync(criteria)));
   }
 
   /**
@@ -202,29 +202,75 @@ export class LeadService {
 
   /**
    * Creates a new lead based on the given LeadRequest.
-   * @param LeadRequest The LeadRequest object containing lead details.
+   * @param leadRequest The LeadRequest object containing lead details.
    * @returns An observable that emits the created Lead object.
    */
-  createLead(LeadRequest: LeadRequest): Observable<Lead> {
-    return defer(() => this.createLeadAsync(LeadRequest));
+  createLead(leadRequest: LeadRequest): Observable<Lead> {
+    return defer(() => from(this.createLeadAsync(leadRequest)));
   }
   /**
    * Asynchronously creates a new lead based on the given LeadRequest.
-   * @param LeadRequest The LeadRequest object containing lead details.
+   * @param leadRequest The LeadRequest object containing lead details.
    * @returns A promise that resolves to the created Lead object.
    */
-  private async createLeadAsync(LeadRequest: LeadRequest): Promise<Lead> {
+  private async createLeadAsync(leadRequest: LeadRequest): Promise<Lead> {
     const newLeadShallow: LeadShallow = {
       id: nanoid(),
-      title: LeadRequest.title,
-      value: LeadRequest.value,
+      title: leadRequest.title,
+      value: leadRequest.value,
       stage: 'new',
       tags: [],
       createdAt: new Date(),
       lastModifiedAt: new Date(),
     };
     const lead = new Lead(newLeadShallow);
-    this.leadDb.add(Lead.toDaoFromLead(lead));
+    await this.leadDb.add(Lead.toDaoFromLead(lead));
     return lead;
+  }
+
+  /**
+   * Updates the stage of a lead with the given ID.
+   * @param leadId The ID of the lead to update.
+   * @param newStage The new stage to set for the lead.
+   * @returns An observable that emits void when the update is complete.
+   */
+  updateLeadStage(leadId: string, newStage: LeadStage): Observable<void> {
+    return defer(() => from(this.updateLeadStageAsync(leadId, newStage))).pipe(
+      map((recordCount) => {
+        // TODO: handle recordCount if needed
+        console.log(`Updated ${recordCount} record(s)`);
+        return;
+      }),
+    );
+  }
+  /**
+   * Asynchronously updates the stage of a lead with the given ID.
+   * @param leadId The ID of the lead to update.
+   * @param newStage The new stage to set for the lead.
+   * @returns A promise that resolves to the number of records updated.
+   */
+  private async updateLeadStageAsync(leadId: string, newStage: LeadStage): Promise<number> {
+    return this.leadDb.update(leadId, {
+      stage: newStage,
+      lastModifiedAt: new Date(),
+    });
+  }
+
+  /**
+   * Deletes the lead with the given ID.
+   * @param leadId The ID of the lead to delete.
+   * @returns An observable that emits void when the deletion is complete.
+   */
+  deleteLead(leadId: string): Observable<void> {
+    return defer(() => from(this.deleteLeadAsync(leadId)));
+  }
+
+  /**
+   * Asynchronously deletes the lead with the given ID.
+   * @param leadId The ID of the lead to delete.
+   * @returns A promise that resolves when the deletion is complete.
+   */
+  private async deleteLeadAsync(leadId: string): Promise<void> {
+    return this.leadDb.delete(leadId);
   }
 }

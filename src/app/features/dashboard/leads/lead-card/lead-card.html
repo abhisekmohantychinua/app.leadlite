@@ -1,4 +1,10 @@
-<p-card styleClass="group w-xs relative mb-7" tabindex="0">
+<p-card
+  appSwipeRight
+  (swipedRight)="updateStage()"
+  appSwipeLeft
+  (swipedLeft)="deleteLead()"
+  styleClass="group w-xs relative mb-7"
+  tabindex="0">
   <p class="h-24 mb-2">
     {{ lead().getTitle() }}
   </p>

@@ -7,8 +7,20 @@
 <!-- Leads Kanban View Container -->
 <div
   class="flex justify-between items-start gap-2 overflow-x-scroll 2xl:overflow-x-auto leads__kanban-container">
-  <app-lead-kanban [kanbanType]="'new'" [leads]="newLeads()"></app-lead-kanban>
-  <app-lead-kanban [kanbanType]="'contacted'" [leads]="contactedLeads()"></app-lead-kanban>
-  <app-lead-kanban [kanbanType]="'proposal'" [leads]="proposalLeads()"></app-lead-kanban>
-  <app-lead-kanban [kanbanType]="'closed'" [leads]="closedLeads()"></app-lead-kanban>
+  <app-lead-kanban
+    (leadUpdated)="handleUpdatedLead()"
+    [kanbanType]="'new'"
+    [leads]="newLeads()"></app-lead-kanban>
+  <app-lead-kanban
+    (leadUpdated)="handleUpdatedLead()"
+    [kanbanType]="'contacted'"
+    [leads]="contactedLeads()"></app-lead-kanban>
+  <app-lead-kanban
+    (leadUpdated)="handleUpdatedLead()"
+    [kanbanType]="'proposal'"
+    [leads]="proposalLeads()"></app-lead-kanban>
+  <app-lead-kanban
+    (leadUpdated)="handleUpdatedLead()"
+    [kanbanType]="'closed'"
+    [leads]="closedLeads()"></app-lead-kanban>
 </div>

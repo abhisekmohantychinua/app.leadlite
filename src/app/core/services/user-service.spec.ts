@@ -4,11 +4,11 @@ import { firstValueFrom } from 'rxjs';
 
 import type { Secret } from '../models/secret';
 import type { User } from '../models/user';
-import type { UserRequest } from '../models/user-request';
-import type { UserUpdateRequest } from '../models/user-update-request';
 import { DexieRepository } from '../repository/dexie-repository';
 import { CryptoService } from './crypto-service';
 import { UserService } from './user-service';
+import { UserRequest } from '../dto/user-request';
+import { UserUpdateRequest } from '../dto/user-update-request';
 
 // Mock nanoid
 jest.mock('nanoid', () => ({

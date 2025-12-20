@@ -1,16 +1,61 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import type { OnDestroy } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CardModule } from 'primeng/card';
+import type { Subscription } from 'rxjs';
 
-import type { Lead } from '../../../../core/models/lead';
+import type { Lead, LeadStage } from '../../../../core/models/lead';
+import { LeadService } from '../../../../core/services/lead-service';
+import { SwipeRight } from '../../../../shared/directives/swipe-right';
+import { KeyListener } from '../../../../shared/directives/key-listener';
+import { SwipeLeft } from '../../../../shared/directives/swipe-left';
 
 @Component({
   selector: 'app-lead-card',
-  imports: [CardModule, DatePipe, RouterLink, CurrencyPipe],
+  imports: [CardModule, DatePipe, RouterLink, CurrencyPipe, SwipeRight, KeyListener, SwipeLeft],
   templateUrl: './lead-card.html',
   styleUrl: './lead-card.scss',
 })
-export class LeadCard {
+export class LeadCard implements OnDestroy {
   lead = input.required<Lead>();
+  leadUpdated = output<void>();
+  private leadService = inject(LeadService);
+  private updateStageSubscription?: Subscription;
+  private deleteLeadSubscription?: Subscription;
+
+  updateStage(newStage?: LeadStage): void {
+    if (!newStage) {
+      switch (this.lead().getStage()) {
+        case 'new':
+          newStage = 'contacted';
+          break;
+        case 'contacted':
+          newStage = 'proposal';
+          break;
+        case 'proposal':
+          newStage = 'closed';
+          break;
+        case 'closed':
+          newStage = 'closed';
+          break;
+      }
+    }
+    this.updateStageSubscription = this.leadService
+      .updateLeadStage(this.lead().getId(), newStage)
+      .subscribe(() => {
+        this.leadUpdated.emit();
+      });
+  }
+
+  deleteLead(): void {
+    this.leadService.deleteLead(this.lead().getId()).subscribe(() => {
+      this.leadUpdated.emit();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.updateStageSubscription?.unsubscribe();
+    this.deleteLeadSubscription?.unsubscribe();
+  }
 }

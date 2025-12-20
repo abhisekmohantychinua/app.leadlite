@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { MessageModule } from 'primeng/message';
 
 import type { Lead, LeadStage } from '../../../../core/models/lead';
@@ -19,6 +19,7 @@ interface KanbanTitle {
 })
 export class LeadKanban {
   kanbanType = input.required<LeadStage>();
+  leadUpdated = output<void>();
   protected readonly kanbanTitle = computed<KanbanTitle>(() => {
     switch (this.kanbanType()) {
       case 'new':
@@ -52,4 +53,8 @@ export class LeadKanban {
     }
   });
   leads = input.required<Lead[]>();
+
+  handleLeadUpdated(): void {
+    this.leadUpdated.emit();
+  }
 }
