@@ -32,8 +32,12 @@ export class NewLead implements OnDestroy {
   private fb = inject(FormBuilder);
   private createLeadSubscription?: Subscription;
   protected readonly newLeadForm = this.fb.group({
-    lead: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
-    value: [undefined, [Validators.min(0)]],
+    lead: this.fb.nonNullable.control('', {
+      validators: [Validators.required, Validators.minLength(8), Validators.maxLength(100)],
+    }),
+    value: this.fb.control<number | null>(null, {
+      validators: [Validators.min(0)],
+    }),
   });
 
   protected formSubmitted = signal<boolean>(false);
@@ -52,11 +56,12 @@ export class NewLead implements OnDestroy {
       return;
     }
     this.loading.set(true);
-    const LeadRequest: LeadRequest = {
-      title: this.newLeadForm.value.lead!,
-      value: this.newLeadForm.value.value!,
+    const { lead, value } = this.newLeadForm.getRawValue();
+    const leadRequest: LeadRequest = {
+      title: lead,
+      value: value ?? undefined,
     };
-    this.createLeadSubscription = this.leadService.createLead(LeadRequest).subscribe({
+    this.createLeadSubscription = this.leadService.createLead(leadRequest).subscribe({
       next: (lead) => {
         this.resetForm();
         this.createdNewLead.emit(lead);
@@ -72,7 +77,7 @@ export class NewLead implements OnDestroy {
   }
 
   resetForm(): void {
-    this.newLeadForm.reset();
+    this.newLeadForm.reset({ lead: '', value: null });
     this.formSubmitted.set(false);
     this.loading.set(false);
   }

@@ -54,7 +54,7 @@ describe('NewLead', () => {
 
     expect(emitSpy).toHaveBeenCalledWith(mockLead);
     const formValue = component['newLeadForm'].value;
-    expect(formValue.lead).toBeNull();
+    expect(formValue.lead).toBe('');
     expect(formValue.value).toBeNull();
     expect(component['loading']()).toBe(false);
     expect(component['formSubmitted']()).toBe(false);
