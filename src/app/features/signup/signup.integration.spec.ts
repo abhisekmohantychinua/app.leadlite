@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import Dexie from 'dexie';
 import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 import { DB_NAME, DexieRepository } from '../../core/repository/dexie-repository';
 import { CryptoService } from '../../core/services/crypto-service';
@@ -26,8 +28,18 @@ if (!globalRef.structuredClone) {
 })
 class StubComponent {}
 
+@Component({
+  selector: 'app-signup-test-host',
+  imports: [Signup, ToastModule],
+  template: `
+    <app-signup></app-signup>
+    <p-toast key="app-toast" position="top-right"></p-toast>
+  `,
+})
+class SignupIntegrationHost {}
+
 describe('Signup Integration', () => {
-  let fixture: ComponentFixture<Signup>;
+  let fixture: ComponentFixture<SignupIntegrationHost>;
   let component: Signup;
   let router: Router;
   let dexieRepository: DexieRepository;
@@ -52,7 +64,7 @@ describe('Signup Integration', () => {
 
     await TestBed.configureTestingModule({
       imports: [
-        Signup,
+        SignupIntegrationHost,
         RouterTestingModule.withRoutes([
           { path: 'login', component: StubComponent },
           { path: 'signup', component: StubComponent },
@@ -62,8 +74,8 @@ describe('Signup Integration', () => {
       providers: [provideNoopAnimations(), MessageService],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Signup);
-    component = fixture.componentInstance;
+    fixture = TestBed.createComponent(SignupIntegrationHost);
+    component = fixture.debugElement.query(By.directive(Signup)).componentInstance;
     router = TestBed.inject(Router);
     dexieRepository = TestBed.inject(DexieRepository);
     cryptoService = TestBed.inject(CryptoService);
@@ -124,7 +136,7 @@ describe('Signup Integration', () => {
     expect(component.isSubmitting()).toBe(false);
   });
 
-  xit('should create a user, toast success, and reset the form', async () => {
+  it('should create a user, toast success, and reset the form', async () => {
     fillForm({
       name: 'Integration User',
       username: 'janedoe',
@@ -151,7 +163,7 @@ describe('Signup Integration', () => {
     expect(component.imageMessage()).toBeNull();
   });
 
-  xit('should show an error toast when username already exists', async () => {
+  it('should show an error toast when username already exists', async () => {
     await seedUser({ username: 'janedoe', password: 'Passw0rd!' });
 
     fillForm({

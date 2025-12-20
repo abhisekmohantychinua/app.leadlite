@@ -1,4 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
+import type { OnDestroy } from '@angular/core';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,6 +15,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { PopoverModule } from 'primeng/popover';
 import { ToastModule } from 'primeng/toast';
+import type { Subscription } from 'rxjs';
 
 import { UserService } from '../../core/services/user-service';
 import { ResetEntirely } from '../../shared/components/reset-entirely/reset-entirely';
@@ -42,12 +44,13 @@ import { CustomValidators } from '../../shared/validators/custom-validators';
   styleUrl: './login.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class Login {
+export default class Login implements OnDestroy {
   private fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
   private readonly destroyRef = inject(DestroyRef);
+  private loginUserSubscription?: Subscription;
   // Central login form definition keeps validators close to the fields they protect.
   form = this.fb.group({
     username: ['', [Validators.required, CustomValidators.username()]],
@@ -69,7 +72,7 @@ export default class Login {
     if (!username || !password) return;
 
     this.isSubmitting.set(true);
-    this.userService
+    this.loginUserSubscription = this.userService
       .loginUser(username, password)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -99,5 +102,8 @@ export default class Login {
     // A control is invalid when it fails validation and was touched or the form submitted.
     const control = this.form.get(controlName);
     return control?.invalid && (control.touched || this.formSubmitted());
+  }
+  ngOnDestroy(): void {
+    this.loginUserSubscription?.unsubscribe();
   }
 }

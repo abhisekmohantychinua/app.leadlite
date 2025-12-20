@@ -22,8 +22,10 @@
     [blockScroll]="true"
     [closeOnEscape]="true">
     <p-menu [model]="menuItems" styleClass="menu__list border-0" [pAutoFocus]="true">
-      <ng-template #item let-item>
+      <ng-template pTemplate="item" let-item>
         <a
+          [appKeyListener]="item.shortcut"
+          [appKeyListenerAction]="item.shortcutAction"
           pRipple
           [routerLink]="item.routerLink"
           routerLinkActive="p-menuitem-link-active"

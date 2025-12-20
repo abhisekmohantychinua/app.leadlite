@@ -1,0 +1,57 @@
+<button pButton (click)="addLeadPopover.toggle($event)">
+  <i class="pi pi-plus" pButtonIcon></i>
+  <span pButtonLabel>New Lead</span>
+</button>
+<p-popover #addLeadPopover>
+  <form [formGroup]="newLeadForm" (ngSubmit)="handleSubmit()" class="flex flex-col gap-4 w-sm">
+    <div class="flex flex-col gap-2">
+      <label for="lead">Lead</label>
+      <input
+        [pAutoFocus]="true"
+        pInputText
+        id="lead"
+        aria-describedby="lead-help"
+        formControlName="lead"
+        [ariaInvalid]="isInvalid('lead')" />
+      @if (isInvalid('lead')) {
+        <p-message severity="error" size="small" variant="simple">
+          @if (newLeadForm.get('lead')?.errors?.['required']) {
+            Lead name is required.
+          } @else if (newLeadForm.get('lead')?.errors?.['minlength']) {
+            Minimum 3 characters.
+          } @else if (newLeadForm.get('lead')?.errors?.['maxlength']) {
+            Maximum 100 characters.
+          }
+        </p-message>
+      } @else {
+        <p-message severity="secondary" size="small" variant="simple">
+          Enter the name of the lead.
+        </p-message>
+      }
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="value">Value</label>
+      <p-inputnumber
+        mode="currency"
+        currency="INR"
+        currencyDisplay="code"
+        locale="en-IN"
+        id="value"
+        aria-describedby="value-help"
+        formControlName="value"
+        [invalid]="isInvalid('value')" />
+      @if (isInvalid('value')) {
+        <p-message severity="error" size="small" variant="simple">
+          @if (newLeadForm.get('value')?.errors?.['min']) {
+            Value must be at least 0.
+          }
+        </p-message>
+      } @else {
+        <p-message severity="secondary" size="small" variant="simple">
+          Enter the estimated value of the lead.
+        </p-message>
+      }
+    </div>
+    <p-button type="submit" label="Create" [loading]="loading()" [disabled]="loading()"></p-button>
+  </form>
+</p-popover>

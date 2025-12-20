@@ -1,4 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
+import type { OnDestroy } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,6 +20,7 @@ import { FocusTrapModule } from 'primeng/focustrap';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
+import type { Subscription } from 'rxjs';
 
 import { UserService } from '../../core/services/user-service';
 import type {
@@ -57,12 +59,13 @@ interface SignupFormValue {
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
 })
-export default class Signup {
+export default class Signup implements OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private createUserSubscription?: Subscription;
   // Keep key limits centralized for template bindings and validation messages.
   protected readonly profileSizeLimitBytes = 300000;
 
@@ -146,7 +149,7 @@ export default class Signup {
 
     this.isSubmitting.set(true);
 
-    this.userService
+    this.createUserSubscription = this.userService
       .createUser({
         name,
         username,
@@ -197,5 +200,9 @@ export default class Signup {
     this.imageState.set('empty');
     this.imageMessage.set(null);
     this.profileUploader?.clearSelection();
+  }
+
+  ngOnDestroy(): void {
+    this.createUserSubscription?.unsubscribe();
   }
 }

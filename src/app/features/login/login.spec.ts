@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { UserService } from '../../core/services/user-service';
 import Login from './login';
@@ -70,5 +70,21 @@ describe('Login', () => {
       expect.objectContaining({ severity: 'error', summary: 'Login failed' }),
     );
     expect(navigateMock).not.toHaveBeenCalled();
+  });
+
+  it('should unsubscribe from login flow when destroyed', () => {
+    const subject = new Subject<void>();
+    loginUserMock.mockReturnValue(subject.asObservable());
+    component.form.patchValue({ username: 'jane_doe', password: 'Passw0rd' });
+
+    component.handleLoginFormSubmit();
+
+    const subscription = component['loginUserSubscription'];
+    expect(subscription).toBeTruthy();
+    const unsubscribeSpy = jest.spyOn(subscription!, 'unsubscribe');
+
+    component.ngOnDestroy();
+
+    expect(unsubscribeSpy).toHaveBeenCalledTimes(1);
   });
 });

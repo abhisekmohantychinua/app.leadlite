@@ -1,0 +1,42 @@
+<p-card styleClass="group w-sm relative mb-7" tabindex="0">
+  <p class="h-20 mb-2">
+    {{ lead().getTitle() }}
+  </p>
+
+  <div
+    class="flex justify-between items-start max-h-0 overflow-hidden group-focus-within:max-h-40 group-hover:max-h-40 transition-all duration-300 ease-in">
+    <div class="w-3/5">
+      <p class="font-normal text-sm truncate">
+        {{ lead().getContact()?.getName() || 'No Contact' }}
+      </p>
+      <p class="font-light text-sm text-gray-600">
+        {{
+          lead().getContact()?.getEmail() || lead().getContact()?.getPhone() || 'No Contact Info'
+        }}
+      </p>
+    </div>
+    <div class="flex flex-col items-end w-2/5">
+      <span class="mb-2">
+        {{ (lead().getValue() | currency: 'INR') || '-' }}
+        <i class="pi pi-wallet text-primary"></i>
+      </span>
+      <span class="mb-2">
+        {{ lead().getNotes()?.length || 0 }}
+        <i class="pi pi-file-edit text-primary"></i>
+      </span>
+      <span class="mb-2">
+        {{ lead().getTasks()?.length || 0 }}
+        <i class="pi pi-check-circle text-primary"></i>
+      </span>
+    </div>
+  </div>
+  <p
+    class="text-end text-xs font-light text-gray-500 block max-h-10 group-hover:max-h-0 group-focus-within:max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+    {{ lead().getCreatedAt() | date: 'mediumDate' }}
+  </p>
+  <a
+    class="flex items-center gap-2 absolute group-focus-within:-bottom-6 right-0 -z-10 group-focus-within:z-10 text-sm text-primary hover:border-b hover:border-primary cursor-pointer transition duration-300 ease-in-out"
+    [routerLink]="['/leads', lead().getId()]">
+    Detailed View <i class="pi pi-arrow-right"></i>
+  </a>
+</p-card>

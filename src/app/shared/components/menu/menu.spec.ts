@@ -2,13 +2,15 @@ import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import type { Drawer } from 'primeng/drawer';
 
 import { Menu } from './menu';
 
 describe('Menu', () => {
   let fixture: ComponentFixture<Menu>;
+  let router: Router;
+  let navigateSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -18,6 +20,8 @@ describe('Menu', () => {
 
     fixture = TestBed.createComponent(Menu);
     fixture.detectChanges();
+    router = TestBed.inject(Router);
+    navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
 
   it('should create', () => {
@@ -52,5 +56,30 @@ describe('Menu', () => {
     expect(shortcuts.map((shortcut) => shortcut.nativeElement.textContent.trim())).toEqual(
       expect.arrayContaining(['H', 'L', 'C', 'P']),
     );
+  });
+
+  it('should close the drawer when a menu item is clicked', () => {
+    const drawerSignal = fixture.componentInstance['drawerVisible'];
+    drawerSignal.set(true);
+    const firstItem = fixture.debugElement.query(By.css('.menu__item'));
+    firstItem.triggerEventHandler('click', new MouseEvent('click'));
+    fixture.detectChanges();
+
+    expect(drawerSignal()).toBe(false);
+  });
+
+  it('should navigate using shortcut actions', () => {
+    fixture.componentInstance.menuItems[0].shortcutAction?.();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/']);
+  });
+
+  it('should sync drawer visibility from drawer events', () => {
+    const drawerSignal = fixture.componentInstance['drawerVisible'];
+    drawerSignal.set(true);
+
+    fixture.componentInstance['handleVisibilityChange'](false);
+
+    expect(drawerSignal()).toBe(false);
   });
 });

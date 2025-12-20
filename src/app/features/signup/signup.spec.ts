@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { UserService } from '../../core/services/user-service';
 import type { ImageUploadChange } from '../../shared/components/image-uploader/image-uploader';
@@ -121,6 +121,29 @@ describe('Signup', () => {
     component.form.updateValueAndValidity();
 
     expect(component.confirmPasswordRequired()).toBe(true);
+  });
+
+  it('should unsubscribe from signup flow when destroyed', () => {
+    const subject = new Subject<void>();
+    createUserMock.mockReturnValue(subject.asObservable());
+    const profile = createMockFile();
+    component.form.patchValue({
+      name: 'Jane Doe',
+      username: 'janedoe',
+      password: 'passw0rd',
+      confirmPassword: 'passw0rd',
+    });
+    emitImageChange(component, { state: 'success', file: profile, message: null });
+
+    component.handleSignupFormSubmit();
+
+    const subscription = component['createUserSubscription'];
+    expect(subscription).toBeTruthy();
+    const unsubscribeSpy = jest.spyOn(subscription!, 'unsubscribe');
+
+    component.ngOnDestroy();
+
+    expect(unsubscribeSpy).toHaveBeenCalledTimes(1);
   });
 });
 

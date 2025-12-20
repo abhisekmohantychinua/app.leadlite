@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["Dexie", "dismissable", "primeng"],
+  "cSpell.words": ["Daos", "Dexie", "dismissable", "onogoing", "primeng"],
   "jest.runMode": "on-demand",
   "prettier.configPath": ".prettierrc.json",
   "editor.wordWrap": "on"

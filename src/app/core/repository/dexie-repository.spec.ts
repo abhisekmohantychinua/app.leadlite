@@ -1,6 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import Dexie from 'dexie';
 
+import type { ClientDao } from '../models/client';
+import type { ContactDao } from '../models/contact';
+import type { LeadDao } from '../models/lead';
+import type { NoteDao } from '../models/note';
+import type { PaymentDao } from '../models/payment';
+import type { ProjectDao } from '../models/project';
+import type { Secret } from '../models/secret';
+import type { TaskDao } from '../models/task';
 import type { User } from '../models/user';
 import { DB_NAME, DB_VERSION, DexieRepository } from './dexie-repository';
 
@@ -11,6 +19,18 @@ const globalRef = globalThis as typeof globalThis & {
 if (!globalRef.structuredClone) {
   globalRef.structuredClone = <T>(value: T): T => value;
 }
+
+const EXPECTED_TABLES = [
+  'users',
+  'secrets',
+  'leads',
+  'contacts',
+  'tasks',
+  'notes',
+  'clients',
+  'projects',
+  'payments',
+] as const;
 
 describe('DexieRepository', () => {
   let service: DexieRepository;
@@ -47,25 +67,101 @@ describe('DexieRepository', () => {
     expect(tableNames).toContain('users');
   });
 
+  it('should register all expected tables in the schema', async () => {
+    await service.readyDexieOpenPromise;
+    const registeredTables = service.tables.map((table) => table.name);
+    EXPECTED_TABLES.forEach((tableName) => {
+      expect(registeredTables).toContain(tableName);
+    });
+  });
+
   it('should clear all tables when resetAllData is called', async () => {
     await service.readyDexieOpenPromise;
+    const now = new Date();
     const user: User = {
-      id: '1',
+      id: 'user-1',
       name: 'Reset Tester',
       username: 'reset-user',
       password: 'hash',
       profile: {} as Blob,
-      createdAt: new Date(),
-      lastModifiedAt: undefined,
+      createdAt: now,
+      lastModifiedAt: now,
+    };
+    const secret: Secret = { id: 1, userSalt: 'salt', sessionHash: 'hash' };
+    const lead: LeadDao = {
+      id: 'lead-1',
+      title: 'Important lead',
+      stage: 'new',
+      createdAt: now,
+      lastModifiedAt: now,
+    };
+    const contact: ContactDao = {
+      id: 'contact-1',
+      leadId: lead.id,
+      name: 'Lead Contact',
+      createdAt: now,
+    };
+    const task: TaskDao = {
+      id: 'task-1',
+      leadId: lead.id,
+      title: 'Call prospect',
+      status: 'todo',
+      createdAt: now,
+    };
+    const note: NoteDao = {
+      id: 'note-1',
+      leadId: lead.id,
+      text: 'First note',
+      createdAt: now,
+    };
+    const client: ClientDao = {
+      id: 'client-1',
+      name: 'ACME',
+      createdAt: now,
+    };
+    const project: ProjectDao = {
+      id: 'project-1',
+      clientId: client.id,
+      name: 'Implementation',
+      status: 'upcoming',
+      createdAt: now,
+    };
+    const payment: PaymentDao = {
+      id: 'payment-1',
+      projectId: project.id,
+      clientId: client.id,
+      dateTime: now,
+      amount: 500,
+      currency: 'USD',
+      createdAt: now,
     };
 
     await service.users.add(user);
-    const secretsTable = service.secrets;
-    await secretsTable.add({ id: 1, userSalt: 'salt', sessionHash: 'hash' });
+    await service.secrets.add(secret);
+    await service.leads.add(lead);
+    await service.contacts.add(contact);
+    await service.tasks.add(task);
+    await service.notes.add(note);
+    await service.clients.add(client);
+    await service.projects.add(project);
+    await service.payments.add(payment);
 
     await service.resetAllData();
 
-    expect(await service.users.count()).toBe(0);
-    expect(await secretsTable.count()).toBe(0);
+    const tablesToAssert = [
+      service.users,
+      service.secrets,
+      service.leads,
+      service.contacts,
+      service.tasks,
+      service.notes,
+      service.clients,
+      service.projects,
+      service.payments,
+    ];
+
+    for (const table of tablesToAssert) {
+      expect(await table.count()).toBe(0);
+    }
   });
 });

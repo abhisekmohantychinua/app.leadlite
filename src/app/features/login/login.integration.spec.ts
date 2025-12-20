@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import Dexie from 'dexie';
 import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 import { DB_NAME, DexieRepository } from '../../core/repository/dexie-repository';
 import { CryptoService } from '../../core/services/crypto-service';
@@ -26,8 +28,18 @@ if (!globalRef.structuredClone) {
 })
 class DashboardStub {}
 
+@Component({
+  selector: 'app-login-test-host',
+  imports: [Login, ToastModule],
+  template: `
+    <app-login></app-login>
+    <p-toast key="app-toast" position="top-right"></p-toast>
+  `,
+})
+class LoginIntegrationHost {}
+
 describe('Login Integration', () => {
-  let fixture: ComponentFixture<Login>;
+  let fixture: ComponentFixture<LoginIntegrationHost>;
   let component: Login;
   let router: Router;
   let messageService: MessageService;
@@ -39,7 +51,7 @@ describe('Login Integration', () => {
 
     await TestBed.configureTestingModule({
       imports: [
-        Login,
+        LoginIntegrationHost,
         RouterTestingModule.withRoutes([
           { path: '', component: DashboardStub },
           { path: 'login', component: DashboardStub },
@@ -48,8 +60,8 @@ describe('Login Integration', () => {
       providers: [provideNoopAnimations(), MessageService],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Login);
-    component = fixture.componentInstance;
+    fixture = TestBed.createComponent(LoginIntegrationHost);
+    component = fixture.debugElement.query(By.directive(Login)).componentInstance;
     router = TestBed.inject(Router);
     messageService = TestBed.inject(MessageService);
     dexieRepository = TestBed.inject(DexieRepository);
@@ -98,7 +110,7 @@ describe('Login Integration', () => {
     expect(sessionStorage.getItem('sessionKey')).toBeNull();
   });
 
-  xit('should log in an existing user, announce success, and navigate home', async () => {
+  it('should log in an existing user, announce success, and navigate home', async () => {
     await seedUser({ username: 'janedoe', password: 'Passw0rd!' });
 
     setFieldValue('username', 'janedoe');
@@ -112,7 +124,7 @@ describe('Login Integration', () => {
     await waitForCondition(() => router.url === '/');
   });
 
-  xit('should show an error toast when credentials are incorrect', async () => {
+  it('should show an error toast when credentials are incorrect', async () => {
     await seedUser({ username: 'janedoe', password: 'Passw0rd!' });
 
     setFieldValue('username', 'janedoe');

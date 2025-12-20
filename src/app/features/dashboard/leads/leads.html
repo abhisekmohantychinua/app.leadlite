@@ -1,1 +1,7 @@
-<p>leads works!</p>
+<div class="w-full flex justify-between flex-wrap items-center gap-2 px-4 py-2">
+  <app-search (searchCriteriaChanged)="handleSearchCriteriaChanged($event)"></app-search>
+  <app-new-lead (createdNewLead)="handleCreatedNewLead()"></app-new-lead>
+</div>
+@for (lead of newLeads(); track $index) {
+  <app-lead-card [lead]="lead"></app-lead-card>
+}

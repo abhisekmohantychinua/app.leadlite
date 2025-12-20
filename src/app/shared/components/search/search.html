@@ -1,0 +1,20 @@
+<div class="w-fit flex items-center justify-center flex-wrap gap-2 md:gap-4">
+  <p-icon-field>
+    <p-inputIcon class="pi pi-search"></p-inputIcon>
+    <input
+      pInputText
+      type="text"
+      placeholder="Search..."
+      name="searchQuery"
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="emitSearchCriteria()" />
+  </p-icon-field>
+  <p-icon-field>
+    <p-select-button
+      name="searchSort"
+      multiple="false"
+      [options]="sortOptions"
+      [(ngModel)]="searchSort"
+      (ngModelChange)="emitSearchCriteria()" />
+  </p-icon-field>
+</div>

@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import type { Table } from 'dexie';
 import Dexie from 'dexie';
 
+import type { ClientDao } from '../models/client';
+import type { ContactDao } from '../models/contact';
+import type { LeadDao } from '../models/lead';
+import type { NoteDao } from '../models/note';
+import type { PaymentDao } from '../models/payment';
+import type { ProjectDao } from '../models/project';
 import type { Secret } from '../models/secret';
+import type { TaskDao } from '../models/task';
 import type { User } from '../models/user';
 
 export const DB_NAME = 'LeadLiteDB';
@@ -14,6 +21,14 @@ export const DB_VERSION = 1;
 export class DexieRepository extends Dexie {
   users!: Table<User, string>;
   secrets!: Table<Secret, number>;
+  leads!: Table<LeadDao, string>;
+  contacts!: Table<ContactDao, string>;
+  tasks!: Table<TaskDao, string>;
+  notes!: Table<NoteDao, string>;
+  clients!: Table<ClientDao, string>;
+  projects!: Table<ProjectDao, string>;
+  payments!: Table<PaymentDao, string>;
+
   /**
    * @internal For testing purposes only
    * This Promise resolves when the database is fully opened.
@@ -32,6 +47,15 @@ export class DexieRepository extends Dexie {
     this.version(DB_VERSION).stores({
       users: 'id, name, &username, password, profile, createdAt, lastModifiedAt', // User schema
       secrets: '++id, &userSalt, &sessionHash', // Secret schema
+      leads: 'id, title, stage, value, *tags, *notes, *tasks, contactId, createdAt, lastModifiedAt', // Lead schema
+      contacts: 'id, leadId, name, email, phone, company, createdAt, lastModifiedAt', // Contact schema
+      tasks: 'id, leadId, title, dueDate, status, createdAt, lastModifiedAt', // Task schema
+      notes: 'id, leadId, text, createdAt', // Note schema
+      clients: 'id, name, email, phone, company, *projects, createdAt, lastModifiedAt', // Client schema
+      projects:
+        'id, clientId, name, status, link, startDate, endDate, remark, feedback, *payments, createdAt, lastModifiedAt', // Project schema
+      payments:
+        'id, projectId, clientId, remark, dateTime, amount, currency, payerName, paymentMethod, paymentReference, createdAt, lastModifiedAt', // Payment schema
     });
     this.readyDexieOpenPromise = this.open(); // Important: Open the database to start using it
   }
