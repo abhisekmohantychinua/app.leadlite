@@ -1,1 +1,0 @@
-import{Pb as d,Ya as s,sb as n,tb as o}from"./chunk-TBMMB432.js";var t=class a{static \u0275fac=function(e){return new(e||a)};static \u0275cmp=s({type:a,selectors:[["app-leads"]],decls:2,vars:0,template:function(e,l){e&1&&(n(0,"p"),d(1,"leads works!"),o())},encapsulation:2})};export{t as default};
