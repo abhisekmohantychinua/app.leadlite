@@ -1,8 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { Lead } from '../../../../core/models/lead';
 import { LeadCard } from './lead-card';
+
+jest.mock('nanoid', () => ({ nanoid: (): string => 'mock-id' }));
 
 describe('LeadCard', () => {
   let component: LeadCard;
