@@ -4,6 +4,7 @@ import { Directive, booleanAttribute, input, output } from '@angular/core';
   selector: '[appSwipeLeft]',
   standalone: true,
   host: {
+    style: 'touch-action: pan-y;',
     '(pointerdown)': 'handlePointerDown($event)',
     '(pointerup)': 'handlePointerUp($event)',
     '(pointercancel)': 'resetGesture()',
