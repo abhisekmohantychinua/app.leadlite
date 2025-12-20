@@ -1,12 +1,12 @@
 import type { OnDestroy } from '@angular/core';
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, output, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AutoFocus } from 'primeng/autofocus';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { PopoverModule } from 'primeng/popover';
+import { Popover, PopoverModule } from 'primeng/popover';
 import type { Subscription } from 'rxjs';
 
 import type { LeadRequest } from '../../../core/dto/lead-request';
@@ -30,6 +30,7 @@ import { LeadService } from '../../../core/services/lead-service';
 export class NewLead implements OnDestroy {
   private leadService = inject(LeadService);
   private fb = inject(FormBuilder);
+  private readonly addLeadPopover = viewChild.required<Popover>('addLeadPopover');
   private createLeadSubscription?: Subscription;
   protected readonly newLeadForm = this.fb.group({
     lead: this.fb.nonNullable.control('', {
@@ -65,6 +66,7 @@ export class NewLead implements OnDestroy {
       next: (lead) => {
         this.resetForm();
         this.createdNewLead.emit(lead);
+        this.addLeadPopover().hide();
       },
       error: (err) => {
         console.error('Error creating lead:', err);

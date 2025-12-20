@@ -1,7 +1,14 @@
-<div class="w-full flex justify-between flex-wrap items-center gap-2 px-4 py-2">
+<!-- Control Bar -->
+<div class="w-full flex justify-between flex-wrap items-center gap-2 mb-5">
   <app-search (searchCriteriaChanged)="handleSearchCriteriaChanged($event)"></app-search>
   <app-new-lead (createdNewLead)="handleCreatedNewLead()"></app-new-lead>
 </div>
-@for (lead of newLeads(); track $index) {
-  <app-lead-card [lead]="lead"></app-lead-card>
-}
+
+<!-- Leads Kanban View Container -->
+<div
+  class="flex justify-between items-start gap-2 overflow-x-scroll 2xl:overflow-x-auto leads__kanban-container">
+  <app-lead-kanban [kanbanType]="'new'" [leads]="newLeads()"></app-lead-kanban>
+  <app-lead-kanban [kanbanType]="'contacted'" [leads]="contactedLeads()"></app-lead-kanban>
+  <app-lead-kanban [kanbanType]="'proposal'" [leads]="proposalLeads()"></app-lead-kanban>
+  <app-lead-kanban [kanbanType]="'closed'" [leads]="closedLeads()"></app-lead-kanban>
+</div>

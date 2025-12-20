@@ -1,0 +1,16 @@
+.leads__kanban-container {
+  overflow: auto;
+
+  // Firefox
+  scrollbar-width: none;
+
+  // IE / Edge (legacy)
+  -ms-overflow-style: none;
+
+  // WebKit browsers (Chrome, Safari, new Edge)
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}

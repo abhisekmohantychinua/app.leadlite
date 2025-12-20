@@ -41,6 +41,7 @@ describe('NewLead', () => {
     const subject = new Subject<Lead>();
     createLeadMock.mockReturnValue(subject.asObservable());
     const emitSpy = jest.spyOn(component.createdNewLead, 'emit');
+    const hideSpy = jest.spyOn(component['addLeadPopover'](), 'hide');
     component['newLeadForm'].setValue({ lead: 'Qualified Lead', value: 5000 });
 
     component.handleSubmit();
@@ -58,6 +59,7 @@ describe('NewLead', () => {
     expect(formValue.value).toBeNull();
     expect(component['loading']()).toBe(false);
     expect(component['formSubmitted']()).toBe(false);
+    expect(hideSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should stop loading when the service errors', () => {
