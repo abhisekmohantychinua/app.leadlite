@@ -20,6 +20,12 @@ const dashboardRoutes: Routes = [
       {
         path: 'leads',
         loadComponent: () => import('./leads/leads'),
+        children: [
+          {
+            path: ':id',
+            loadComponent: () => import('./leads/lead-detail/lead-detail'),
+          },
+        ],
       },
       {
         path: 'clients',

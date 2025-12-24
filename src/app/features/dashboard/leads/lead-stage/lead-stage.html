@@ -1,0 +1,16 @@
+<p-selectbutton
+  name="leadStage"
+  [options]="LeadStageOptions"
+  [formControl]="leadFormControl"
+  size="small"
+  aria-label="Select Lead Stage"
+  (onChange)="saveStage()">
+  <ng-template #item let-item>
+    <i
+      [pTooltip]="item.tooltip"
+      showDelay="800"
+      autoHide="true"
+      tooltipPosition="bottom"
+      [class]="item.icon"></i>
+  </ng-template>
+</p-selectbutton>

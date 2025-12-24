@@ -7,13 +7,13 @@ import type { Subscription } from 'rxjs';
 
 import type { Lead, LeadStage } from '../../../../core/models/lead';
 import { LeadService } from '../../../../core/services/lead-service';
-import { SwipeRight } from '../../../../shared/directives/swipe-right';
-import { KeyListener } from '../../../../shared/directives/key-listener';
 import { SwipeLeft } from '../../../../shared/directives/swipe-left';
+import { SwipeRight } from '../../../../shared/directives/swipe-right';
+import { LeadTitle } from '../lead-title/lead-title';
 
 @Component({
   selector: 'app-lead-card',
-  imports: [CardModule, DatePipe, RouterLink, CurrencyPipe, SwipeRight, KeyListener, SwipeLeft],
+  imports: [CardModule, DatePipe, RouterLink, CurrencyPipe, SwipeRight, SwipeLeft, LeadTitle],
   templateUrl: './lead-card.html',
   styleUrl: './lead-card.scss',
 })

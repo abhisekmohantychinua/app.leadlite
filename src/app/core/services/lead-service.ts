@@ -18,6 +18,7 @@ import { DexieRepository } from '../repository/dexie-repository';
 import { ContactService } from './contact-service';
 import { NoteService } from './note-service';
 import { TaskService } from './task-service';
+import { LeadUpdateRequest } from '../dto/lead-update-request';
 
 @Injectable({
   providedIn: 'root',
@@ -272,5 +273,70 @@ export class LeadService {
    */
   private async deleteLeadAsync(leadId: string): Promise<void> {
     return this.leadDb.delete(leadId);
+  }
+
+  getLeadById(leadId: string): Observable<Lead> {
+    return defer(() => from(this.getLeadByIdAsync(leadId)));
+  }
+  private async getLeadByIdAsync(leadId: string): Promise<Lead> {
+    let lead: Lead, taskIds: string[], noteIds: string[];
+    return this.leadDb
+      .get(leadId)
+      .then((leadDao) => {
+        if (!leadDao) throw new Error(`Lead with id ${leadId} not found`);
+        lead = Lead.toLeadFromDao(leadDao);
+        taskIds = leadDao.tasks || [];
+        noteIds = leadDao.notes || [];
+        const contactId = leadDao.contactId;
+        return contactId ? this.contactService.getContactDaoByIdAsync(contactId) : undefined;
+      })
+      .then((contactDaoOrUndefined) => {
+        if (contactDaoOrUndefined) {
+          const contact = Contact.toContactFromDao(contactDaoOrUndefined);
+          lead.setContact(contact);
+        }
+        return this.taskService.getTaskDaosByIdsAsync(new Set(taskIds));
+      })
+      .then((taskDaos) => {
+        taskDaos.forEach((taskDao) => {
+          if (taskDao) {
+            const task = Task.toTaskFromDao(taskDao);
+            lead.getTasks()?.push(task);
+          }
+        });
+        return this.noteService.getNoteDaosByIdsAsync(new Set(noteIds));
+      })
+      .then((noteDaos) => {
+        noteDaos.forEach((noteDao) => {
+          if (noteDao) {
+            const note = Note.toNoteFromDao(noteDao);
+            lead.getNotes()?.push(note);
+          }
+        });
+        return lead;
+      });
+  }
+
+  updateLead(leadId: string, leadUpdateRequest: LeadUpdateRequest): Observable<void> {
+    return defer(() => from(this.updateLeadAsync(leadId, leadUpdateRequest))).pipe(
+      map(() => {
+        // TODO: handle updatedLead if needed
+        console.log(`Updated lead with id ${leadId}`);
+        return;
+      }),
+    );
+  }
+  private async updateLeadAsync(
+    leadId: string,
+    leadUpdateRequest: LeadUpdateRequest,
+  ): Promise<number> {
+    const updateData: Partial<LeadDao> = {
+      ...(leadUpdateRequest.title !== undefined ? { title: leadUpdateRequest.title } : {}),
+      ...(leadUpdateRequest.value !== undefined ? { value: leadUpdateRequest.value } : {}),
+      ...(leadUpdateRequest.stage !== undefined ? { stage: leadUpdateRequest.stage } : {}),
+      ...(leadUpdateRequest.tags !== undefined ? { tags: leadUpdateRequest.tags } : {}),
+      lastModifiedAt: new Date(),
+    };
+    return this.leadDb.update(leadId, updateData);
   }
 }

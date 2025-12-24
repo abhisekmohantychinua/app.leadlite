@@ -1,0 +1,31 @@
+@if (editMode()) {
+  <p-iftalabel>
+    <p-inputnumber
+      inputId="lead-value-input"
+      mode="currency"
+      currency="INR"
+      currencyDisplay="symbol"
+      locale="en-IN"
+      [formControl]="leadFormControl"
+      (blur)="saveValue()"
+      (keydown.enter)="saveValue()"
+      [invalid]="leadFormControl.invalid" />
+    <label for="lead-value-input">Value (INR)</label>
+  </p-iftalabel>
+  @if (leadFormControl.invalid) {
+    <p-message severity="error" size="small" variant="simple">
+      Value must be zero or higher.
+    </p-message>
+  }
+} @else {
+  <p>
+    <i class="pi pi-wallet text-xl text-primary"></i>
+    <span class="font-semibold text-2xl" (dblclick)="toggleEditMode()">
+      @if (leadFormControl.value !== null && leadFormControl.value !== undefined) {
+        {{ leadFormControl.value | currency: 'INR' : 'symbol' : '1.0-0' }}
+      } @else {
+        -
+      }
+    </span>
+  </p>
+}

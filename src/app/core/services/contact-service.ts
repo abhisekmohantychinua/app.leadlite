@@ -20,4 +20,8 @@ export class ContactService {
   ): Promise<(ContactDao | undefined)[]> {
     return this.contactDb.bulkGet(Array.from(contactIds));
   }
+
+  getContactDaoByIdAsync(contactId: string): Promise<ContactDao | undefined> {
+    return this.contactDb.get(contactId);
+  }
 }

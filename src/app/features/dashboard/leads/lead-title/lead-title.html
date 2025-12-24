@@ -1,0 +1,29 @@
+@if (editMode()) {
+  <p-iftalabel>
+    <textarea
+      id="lead-title-input"
+      pInputTextarea
+      [formControl]="leadFormControl"
+      (blur)="saveTitle()"
+      (keydown.enter)="saveTitle()"
+      pAutoFocus="true"
+      rows="4"
+      cols="30"></textarea>
+    <label for="lead-title-input">Lead</label>
+  </p-iftalabel>
+  @if (leadFormControl.invalid) {
+    <p-message severity="error" size="small" variant="simple">
+      @if (leadFormControl.errors?.['required']) {
+        Lead title is required.
+      } @else if (leadFormControl.errors?.['minlength']) {
+        Minimum 3 characters.
+      } @else if (leadFormControl.errors?.['maxlength']) {
+        Maximum 100 characters.
+      }
+    </p-message>
+  }
+} @else {
+  <p class="font-medium text-base h-24" (dblclick)="toggleEditMode()">
+    {{ leadFormControl.value }}
+  </p>
+}

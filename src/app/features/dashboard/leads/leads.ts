@@ -1,17 +1,17 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { RouterOutlet } from '@angular/router';
 import { switchMap } from 'rxjs';
 
 import type { SearchCriteria } from '../../../core/dto/search-criteria';
 import { LeadService } from '../../../core/services/lead-service';
 import { NewLead } from '../../../shared/components/new-lead/new-lead';
 import { Search } from '../../../shared/components/search/search';
-import { LeadCard } from './lead-card/lead-card';
 import { LeadKanban } from './lead-kanban/lead-kanban';
 
 @Component({
   selector: 'app-leads',
-  imports: [Search, NewLead, LeadCard, LeadKanban],
+  imports: [Search, NewLead, LeadKanban, RouterOutlet],
   templateUrl: './leads.html',
   styleUrl: './leads.scss',
 })

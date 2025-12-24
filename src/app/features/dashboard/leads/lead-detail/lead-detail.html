@@ -1,0 +1,49 @@
+<p-drawer
+  (onHide)="navigateBackOnClose()"
+  header="Lead Details"
+  [(visible)]="drawerVisible"
+  position="right">
+  @if (lead(); as currentLead) {
+    <div class="w-full mb-4">
+      <app-lead-title [leadId]="currentLead.getId()" [leadTitle]="currentLead.getTitle()">
+      </app-lead-title>
+    </div>
+    <div class="w-full text-start mb-4">
+      <app-lead-value [leadId]="currentLead.getId()" [leadValue]="currentLead.getValue()">
+      </app-lead-value>
+    </div>
+    <div class="w-full text-end mb-4">
+      <app-lead-stage [leadId]="currentLead.getId()" [leadStage]="currentLead.getStage()">
+      </app-lead-stage>
+    </div>
+
+    <div
+      class="w-full rounded-2xl border border-slate-200/70 px-4 py-4 text-xs shadow-sm shadow-slate-200/60 ring-1 ring-white/70 backdrop-blur dark:border-slate-700/70 dark:shadow-slate-950/60 dark:ring-white/10 mt-4">
+      <p class="mb-3 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+        Activity
+      </p>
+
+      <div class="flex flex-col divide-y divide-slate-200/60 dark:divide-slate-700/60">
+        <div class="flex items-center justify-between gap-4 py-2 first:pt-0">
+          <span
+            class="text-[0.65rem] uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400"
+            >Created</span
+          >
+          <span class="font-semibold text-slate-600 dark:text-slate-50">
+            {{ currentLead.getCreatedAt() | date: "MMM dd, yyyy 'at' hh:mm a" }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between gap-4 py-2">
+          <span
+            class="text-[0.65rem] uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400"
+            >Updated</span
+          >
+          <span class="font-semibold text-slate-600 dark:text-slate-50">
+            {{ (currentLead.getLastModifiedAt() | date: "MMM dd, yyyy 'at' hh:mm a") || '-' }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <p-divider class="w-full" />
+  }
+</p-drawer>
