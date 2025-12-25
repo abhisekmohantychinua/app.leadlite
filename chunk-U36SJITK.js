@@ -1,1 +1,0 @@
-import{Xb as n,Za as s,xb as r,yb as a}from"./chunk-QDV7XRN5.js";var t=class o{static \u0275fac=function(e){return new(e||o)};static \u0275cmp=s({type:o,selectors:[["app-projects"]],decls:2,vars:0,template:function(e,p){e&1&&(r(0,"p"),n(1,"projects works!"),a())},encapsulation:2})};export{t as default};
