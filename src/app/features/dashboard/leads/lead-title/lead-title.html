@@ -1,14 +1,14 @@
 @if (editMode()) {
-  <p-iftalabel class="w-full">
+  <p-iftalabel>
     <textarea
+      class="w-full"
       id="lead-title-input"
       pInputTextarea
       [formControl]="leadFormControl"
       (blur)="saveTitle()"
       (keydown.enter)="saveTitle()"
       pAutoFocus="true"
-      rows="4"
-      cols="30"></textarea>
+      rows="4"></textarea>
     <label for="lead-title-input">Lead</label>
   </p-iftalabel>
   @if (leadFormControl.invalid) {

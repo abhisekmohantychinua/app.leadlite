@@ -3,7 +3,7 @@
     kanbanTitle().title
   }}</p-message>
   <div class="flex flex-col items-center">
-    @for (lead of leads(); track $index) {
+    @for (lead of leads(); track lead.getId()) {
       <app-lead-card (leadUpdated)="handleLeadUpdated()" [lead]="lead"></app-lead-card>
     }
   </div>
