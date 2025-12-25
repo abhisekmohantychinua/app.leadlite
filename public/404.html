@@ -98,11 +98,15 @@
         }
         var redirectParam = encodeURIComponent(originalTarget);
         var redirectUrl = basePath + '?gh_redirect=' + redirectParam;
+        console.log('Redirecting to:', redirectUrl);
+        setTimeout(function () {
+          console.log('If you are not redirected automatically, please click the link below.');
+        }, 3000);
         var fallbackLink = document.getElementById('redirect-link');
         if (fallbackLink) {
           fallbackLink.href = redirectUrl;
         }
-        window.location.replace(redirectUrl);
+        // window.location.replace(redirectUrl);
       })();
     </script>
   </body>
