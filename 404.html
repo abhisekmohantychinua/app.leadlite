@@ -89,24 +89,32 @@
     </main>
     <script>
       (function () {
-        var originalTarget =
-          window.location.pathname + window.location.search + window.location.hash;
-        var segments = window.location.pathname.split('/').filter(Boolean);
-        var basePath = '/';
-        if (segments.length > 0) {
-          basePath += segments[0] + '/';
+        var pathname = window.location.pathname;
+        var searchAndHash = window.location.search + window.location.hash;
+        var segments = pathname.split('/').filter(Boolean);
+        var repoBase = segments.length > 0 ? '/' + segments[0] : '';
+        var basePath = (repoBase || '') + '/';
+
+        var appRelativePath = pathname.startsWith(repoBase)
+          ? pathname.slice(repoBase.length)
+          : pathname;
+        if (!appRelativePath) {
+          appRelativePath = '/';
         }
-        var redirectParam = encodeURIComponent(originalTarget);
+        if (!appRelativePath.startsWith('/')) {
+          appRelativePath = '/' + appRelativePath;
+        }
+        var normalizedTarget = appRelativePath + searchAndHash;
+
+        var redirectParam = encodeURIComponent(normalizedTarget);
         var redirectUrl = basePath + '?gh_redirect=' + redirectParam;
+
         console.log('Redirecting to:', redirectUrl);
-        setTimeout(function () {
-          console.log('If you are not redirected automatically, please click the link below.');
-        }, 3000);
         var fallbackLink = document.getElementById('redirect-link');
         if (fallbackLink) {
           fallbackLink.href = redirectUrl;
         }
-        // window.location.replace(redirectUrl);
+        window.location.replace(redirectUrl);
       })();
     </script>
   </body>
